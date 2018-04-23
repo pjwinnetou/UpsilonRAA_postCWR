@@ -6,6 +6,8 @@
 #include "TFile.h"
 #include "TStyle.h"
 #include "TTree.h"
+#include "../commonUtility.h"
+#include "../SONGKYO.h"
 
 using namespace std;
 
@@ -65,6 +67,87 @@ void merge()
   hrapAccPP3S->Write();
   hintAccAA3S->Write();
   hintAccPP3S->Write();
+
+  handsomeTH1(hptAccPP1S,1);
+  handsomeTH1(hptAccAA1S,2);
+  handsomeTH1(hptAccPP2S,1);
+  handsomeTH1(hptAccAA2S,2);
+  handsomeTH1(hptAccPP3S,1);
+  handsomeTH1(hptAccAA3S,2);
+
+  handsomeTH1(hrapAccPP1S,1);
+  handsomeTH1(hrapAccAA1S,2);
+  handsomeTH1(hrapAccPP2S,1);
+  handsomeTH1(hrapAccAA2S,2);
+  handsomeTH1(hrapAccPP3S,1);
+  handsomeTH1(hrapAccAA3S,2);
+
+  TLegend *leg1 = new TLegend(0.5,0.6,0.8,0.8);
+  SetLegendStyle(leg1);
+  leg1->AddEntry(hptAccPP1S,"PP #varUpsilon(1S)","l");
+  leg1->AddEntry(hptAccAA1S,"AA #varUpsilon(1S)","l");
+  TLegend *leg2 = new TLegend(0.5,0.6,0.8,0.8);
+  SetLegendStyle(leg2);
+  leg2->AddEntry(hptAccPP2S,"PP #varUpsilon(2S)","l");
+  leg2->AddEntry(hptAccAA2S,"AA #varUpsilon(2S)","l");
+  TLegend *leg3 = new TLegend(0.5,0.6,0.8,0.8);
+  SetLegendStyle(leg3);
+  leg3->AddEntry(hptAccPP3S,"PP #varUpsilon(3S)","l");
+  leg3->AddEntry(hptAccAA3S,"AA #varUpsilon(3S)","l");
+
+  TLegend *lg1 = new TLegend(0.5,0.6,0.8,0.8);
+  SetLegendStyle(lg1);
+  lg1->AddEntry(hrapAccPP1S,"PP #varUpsilon(1S)","l");
+  lg1->AddEntry(hrapAccAA1S,"AA #varUpsilon(1S)","l");
+  TLegend *lg2 = new TLegend(0.5,0.6,0.8,0.8);
+  SetLegendStyle(lg2);
+  lg2->AddEntry(hrapAccPP2S,"PP #varUpsilon(2S)","l");
+  lg2->AddEntry(hrapAccAA2S,"AA #varUpsilon(2S)","l");
+  TLegend *lg3 = new TLegend(0.5,0.6,0.8,0.8);
+  SetLegendStyle(lg3);
+  lg3->AddEntry(hrapAccPP3S,"PP #varUpsilon(3S)","l");
+  lg3->AddEntry(hrapAccAA3S,"AA #varUpsilon(3S)","l");
+
+  hptAccPP1S->GetYaxis()->SetTitle("Acceptance");
+  hptAccPP2S->GetYaxis()->SetTitle("Acceptance");
+  hptAccPP3S->GetYaxis()->SetTitle("Acceptance");
+  hrapAccPP1S->GetYaxis()->SetTitle("Acceptance");
+  hrapAccPP2S->GetYaxis()->SetTitle("Acceptance");
+  hrapAccPP3S->GetYaxis()->SetTitle("Acceptance");
+
+  TCanvas *c1 = new TCanvas("c1","",1200,500);
+  c1->Divide(3,1);
+  c1->cd(1);
+  hptAccPP1S->Draw();
+  hptAccAA1S->Draw("same");
+  leg1->Draw("same");
+  c1->cd(2);
+  hptAccPP2S->Draw();
+  hptAccAA2S->Draw("same");
+  leg2->Draw("same");
+  c1->cd(3);
+  hptAccPP3S->Draw();
+  hptAccAA3S->Draw("same");
+  leg3->Draw("same");
+  c1->SaveAs("plots/c_acc_pt_comp.pdf");  
+
+  TCanvas *c2 = new TCanvas("c2","",1200,500);
+  c2->Divide(3,1);
+  c2->cd(1);
+  hrapAccPP1S->Draw();
+  hrapAccAA1S->Draw("same");
+  lg1->Draw("same");
+  c2->cd(2);
+  hrapAccPP2S->Draw();
+  hrapAccAA2S->Draw("same");
+  lg2->Draw("same");
+  c2->cd(3);
+  hrapAccPP3S->Draw();
+  hrapAccAA3S->Draw("same");
+  lg3->Draw("same");
+  c2->SaveAs("plots/c_acc_rap_comp.pdf");  
+
+
 
   TFile *f_syspp1s = new TFile("sys_single_PP_1S.root","read");
   TFile *f_syspp2s = new TFile("sys_single_PP_2S.root","read");

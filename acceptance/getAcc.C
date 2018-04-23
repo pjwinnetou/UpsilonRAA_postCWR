@@ -41,11 +41,11 @@ void getAcc(int state= 2, int collId= kAADATA) {
   }
   else if ( state == 2 ) {
     nPtBins = nPtBins2s;    ptBin = ptBin2s;
-    nYBins = nYBins1S;    yBin = yBin1S;
+    nYBins = nYBins2S;    yBin = yBin2S;
   }
   else if ( state == 3 ) {
-    nPtBins = nPtBins2s;    ptBin = ptBin2s;
-    nYBins = nYBins1S;    yBin = yBin1S;
+    nPtBins = nPtBins3s;    ptBin = ptBin3s;
+    nYBins = nYBins3S;    yBin = yBin3S;
   }
   //For 2D plot :
   float ptLo = 0; float ptHi = 30;
@@ -82,30 +82,9 @@ void getAcc(int state= 2, int collId= kAADATA) {
 
   TChain *mmGen = new TChain("mmGen");
 
-  if(state==1){
-    if(collId==kPPDATA){
-      mmGen->Add("../skimmedFiles/yskimPP_MC_Ups1S_Trig-L1DoubleMu0_OpSign_EP-OppositeHF_20161281226_.root");
-    }
-    else if(collId==kAADATA){
-      mmGen->Add("../skimmedFiles/yskimAA_MC_Ups1S_Trig-L1DoubleMu0_OpSign_EP-OppositeHF_20161281233_.root");
-    }
-  }
-  else if(state==2){
-    if(collId==kPPDATA){
-      mmGen->Add("../skimmedFiles/yskimPP_MC_Ups2S_Trig-L1DoubleMu0_OpSign_EP-OppositeHF_20161281228_.root");
-    }
-    else if(collId==kAADATA){
-      mmGen->Add("../skimmedFiles/yskimAA_MC_Ups2S_Trig-L1DoubleMu0_OpSign_EP-OppositeHF_20161281234_.root");
-    }
-  }
-  else if(state==3){
-    if(collId==kPPDATA){
-      mmGen->Add("../skimmedFiles/yskimPP_MC_Ups3S_Trig-L1DoubleMu0_OpSign_EP-OppositeHF_20161281230_.root");
-    }
-    else if(collId==kAADATA){
-      mmGen->Add("../skimmedFiles/yskimAA_MC_Ups3S_Trig-L1DoubleMu0_OpSign_EP-OppositeHF_20161281235_.root");
-    }
-  }
+  if(state==1) {mmGen->Add("../skimmedFiles/yskimPP_MC_Ups1S_Trig-L1DoubleMu0_OpSign_EP-OppositeHF_20161015_unIdentified_wgt.root");}
+  else if(state==2) {mmGen->Add("../skimmedFiles/yskimPP_MC_Ups2S_Trig-L1DoubleMu0_OpSign_EP-OppositeHF_20161015_unIdentified_wgt.root");}
+  else if(state==3) {mmGen->Add("../skimmedFiles/yskimPP_MC_Ups3S_Trig-L1DoubleMu0_OpSign_EP-OppositeHF_20161015_unIdentified_wgt.root");}
 
   DiMuon  dmGen;
   TBranch *b_dmGen;
@@ -187,25 +166,27 @@ void getAcc(int state= 2, int collId= kAADATA) {
 
     if( !( (dmGen.pt > ptMin) && (dmGen.pt < ptMax) && (fabs(dmGen.y) > yMin) && (fabs(dmGen.y) < yMax) ) ) continue;
     hptGen -> Fill(dmGen.pt, ptWeight * ptWeight_func);
-    hrapGen -> Fill(dmGen.y, ptWeight * ptWeight_func);
+    hrapGen -> Fill(fabs(dmGen.y), ptWeight * ptWeight_func);
     hintGen -> Fill(dmGen.pt, ptWeight * ptWeight_func);
-    
+ 
+
     //Sys
     for(int i=0;i<nVar;i++){
       hptGenAccSys_allGen[i]->Fill(dmGen.pt, ptWeight * ptWeight_func_sys[i]);
-      hrapGenAccSys_allGen[i]->Fill(dmGen.y, ptWeight * ptWeight_func_sys[i]);
+      hrapGenAccSys_allGen[i]->Fill(fabs(dmGen.y), ptWeight * ptWeight_func_sys[i]);
       hintGenAccSys_allGen[i]->Fill(dmGen.pt, ptWeight * ptWeight_func_sys[i]);
     }
 
     if( !(dmGen.pt1>4 && dmGen.pt2>4 && (fabs(dmGen.eta1)<2.4) && (fabs(dmGen.eta2)<2.4)) ) continue;
     hptGenAcc -> Fill(dmGen.pt, ptWeight * ptWeight_func);
-    hrapGenAcc -> Fill(dmGen.y, ptWeight * ptWeight_func);
+    hrapGenAcc -> Fill(fabs(dmGen.y), ptWeight * ptWeight_func);
     hintGenAcc -> Fill(dmGen.pt, ptWeight * ptWeight_func);
- 
+
+
     //Sys
     for(int i=0;i<nVar;i++){
       hptGenAccSys[i] -> Fill(dmGen.pt, ptWeight * ptWeight_func_sys[i]);
-      hrapGenAccSys[i] -> Fill(dmGen.y, ptWeight * ptWeight_func_sys[i]);
+      hrapGenAccSys[i] -> Fill(fabs(dmGen.y), ptWeight * ptWeight_func_sys[i]);
       hintGenAccSys[i] -> Fill(dmGen.pt, ptWeight * ptWeight_func_sys[i]);
     }
   }
@@ -301,9 +282,7 @@ void getAcc(int state= 2, int collId= kAADATA) {
   hintAcc->Draw();
 
   TCanvas* c4 =  new TCanvas("c3","", 800, 600);
-//  hptAccSys[1]->Draw();
-  hptGenAccSys[0]->Draw();
-
+  hptAccSys[0]->Draw();
 
   TFile *rf_nom = new TFile(Form("acc_single_%s_%dS.root",fCollId.Data(),state),"recreate"); 
   TFile *rf_sys = new TFile(Form("sys_single_%s_%dS.root",fCollId.Data(),state),"recreate"); 
