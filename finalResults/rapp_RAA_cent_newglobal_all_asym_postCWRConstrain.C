@@ -4,10 +4,10 @@
 #include "../cutsAndBin.h"
 #include "../commonUtility.h"
 
-void strickland_RAA_cent_newglobal_all_asym_postCWRConstrain(bool isArrow =true)
+void rapp_RAA_cent_newglobal_all_asym_postCWRConstrain(bool isArrow =true)
 {
   setTDRStyle();
-  writeExtraText = false;       // if extra text
+  writeExtraText = true;       // if extra text
   int iPeriod = 100; // 1: pp, 2: pPb, 3: PbPb, 100: RAA vs cent, 101: RAA vs pt or rap
   int iPos = 33;
   
@@ -101,7 +101,6 @@ void strickland_RAA_cent_newglobal_all_asym_postCWRConstrain(bool isArrow =true)
   cout << " INTEGRATED" << endl;
   for (int is=0; is<nState; is++){
     cout << is+1 <<"th state***************" << endl;
-  cout << "npoint_int_Lo " << npoint_int_Lo[is] << endl;
     if (npoint_int_Lo[is] != gRAA_int[is]->GetN()) {cout << "Error!! data file and syst. file have different binnig!" << endl; return; }    
     for (int ipt=0; ipt< npoint_int_Lo[is] ; ipt++) {
       pxtmp=0; pytmp=0; extmp=0; eytmp=0;
@@ -295,62 +294,58 @@ void strickland_RAA_cent_newglobal_all_asym_postCWRConstrain(bool isArrow =true)
 
 //  globtex->DrawLatex(0.22, sz_init-sz_step*2, "Centrality 0-100%");
 
-  TFile *fstrickland = new TFile("TheoryCurve/StrickLand_RAA_5023.root","READ");
+  TFile *fstrickland = new TFile("TheoryCurve/Rapp_RAA_5023.root","READ");
   
-  TGraphErrors *gRAA_1S_strickland[3]; 
-  TGraphErrors *gRAA_2S_strickland[3]; 
-  TGraphErrors *gRAA_3S_strickland[3]; 
+  TGraphErrors *gRAA_max[3]; 
+  TGraphErrors *gRAA_min[3]; 
+  TGraphErrors *gRAA_shade[3]; 
   
   for(int i=0;i<3;i++)
   {
-    gRAA_1S_strickland[i] = (TGraphErrors*) fstrickland-> Get(Form("RAA_strick_nPart_1S_%d",i));
-    gRAA_2S_strickland[i] = (TGraphErrors*) fstrickland-> Get(Form("RAA_strick_nPart_2S_%d",i));
-    gRAA_3S_strickland[i] = (TGraphErrors*) fstrickland-> Get(Form("RAA_strick_nPart_3S_%d",i));
-    gRAA_1S_strickland[i] -> SetLineWidth(3.);
-    gRAA_2S_strickland[i] -> SetLineWidth(3.0);
-    gRAA_3S_strickland[i] -> SetLineWidth(3);
+    gRAA_max[i] = (TGraphErrors*) fstrickland-> Get(Form("RAA_rapp_nPart_%dS_max",i+1));
+    gRAA_min[i] = (TGraphErrors*) fstrickland-> Get(Form("RAA_rapp_nPart_%dS_min",i+1));
+    gRAA_shade[i] = (TGraphErrors*) fstrickland-> Get(Form("RAA_%ds_shade",i+1));
+    gRAA_max[i] -> SetLineWidth(2.);
+    gRAA_min[i] -> SetLineWidth(2.0);
+    gRAA_shade[i] -> SetLineWidth(2);
   }
-  gRAA_1S_strickland[0]->SetLineColor(kRed+3);
-  gRAA_1S_strickland[1]->SetLineColor(kRed+3);
-  gRAA_1S_strickland[2]->SetLineColor(kRed+3);
-  gRAA_1S_strickland[0]->SetLineStyle(3);
-  gRAA_1S_strickland[1]->SetLineStyle(1);
-  gRAA_1S_strickland[2]->SetLineStyle(8);
+  gRAA_max[0]->SetLineColor(kRed+3);
+  gRAA_max[1]->SetLineColor(kBlue+3);
+  gRAA_max[2]->SetLineColor(kGreen+2);
   
-  gRAA_2S_strickland[0]->SetLineColor(kBlue+3);
-  gRAA_2S_strickland[1]->SetLineColor(kBlue+3);
-  gRAA_2S_strickland[2]->SetLineColor(kBlue+3);
-  gRAA_2S_strickland[0]->SetLineStyle(3);
-  gRAA_2S_strickland[1]->SetLineStyle(1);
-  gRAA_2S_strickland[2]->SetLineStyle(8);
-  
-  gRAA_3S_strickland[0]->SetLineColor(kGreen+2);
-  gRAA_3S_strickland[1]->SetLineColor(kGreen+2);
-  gRAA_3S_strickland[2]->SetLineColor(kGreen+2);
-  gRAA_3S_strickland[0]->SetLineStyle(3);
-  gRAA_3S_strickland[1]->SetLineStyle(1);
-  gRAA_3S_strickland[2]->SetLineStyle(8);
-  
+  gRAA_min[0]->SetLineColor(kRed+3);
+  gRAA_min[1]->SetLineColor(kBlue+3);
+  gRAA_min[2]->SetLineColor(kGreen+2);
+   
+  gRAA_shade[0]->SetFillStyle(3013);
+  gRAA_shade[1]->SetFillStyle(3013);
+  gRAA_shade[2]->SetFillStyle(3013);
+  gRAA_shade[0]->SetFillColor(kRed+3);
+  gRAA_shade[1]->SetFillColor(kBlue+3);
+  gRAA_shade[2]->SetFillColor(kGreen+2);
+
 
   for(int i=0;i<3;i++){
-    gRAA_1S_strickland[i]->Draw("same");
-    gRAA_2S_strickland[i]->Draw("same");
-    gRAA_3S_strickland[i]->Draw("same");
+    gRAA_shade[i]->Draw("f");
+    gRAA_max[i]->Draw("l");
+    gRAA_min[i]->Draw("l");
   }
    
-  TLegend *leg_strick= new TLegend(0.29, 0.586, 0.46, 0.716);
-  SetLegendStyle(leg_strick);
-  leg_strick->SetTextSize(0.040);
-  leg_strick->AddEntry(gRAA_1S_strickland[2],"Y(1S)","l");
-  leg_strick->AddEntry(gRAA_2S_strickland[2],"Y(2S)","l");
-//  leg_strick->Draw("same");
-
   double line_y = 0.91;
   double line_y_diff = 0.07;
   double line_y_diff_in = 0.02;
   double line_x_end = 107;//122
   double line_x_start = 80;//97
-  TLine* t1 = new TLine(line_x_start,line_y,line_x_end,line_y);
+  TLegend *leg_strick= new TLegend(0.31, 0.526, 0.66, 0.706);
+  SetLegendStyle(leg_strick);
+  leg_strick->SetTextSize(0.040);
+  leg_strick->AddEntry(gRAA_shade[0],"#varUpsilon(1S)","f");
+  leg_strick->AddEntry(gRAA_shade[1],"#varUpsilon(2S)","f");
+  leg_strick->AddEntry(gRAA_shade[2],"#varUpsilon(3S)","f");
+  leg_strick->Draw("same");
+  drawText2("X. Du, M. He, R. Rapp",line_x_start,line_y+0.034,22);
+
+/*  TLine* t1 = new TLine(line_x_start,line_y,line_x_end,line_y);
   t1->SetLineStyle(3);
   t1->SetLineWidth(2);
   t1->SetLineColor(kRed+3);
@@ -410,7 +405,7 @@ void strickland_RAA_cent_newglobal_all_asym_postCWRConstrain(bool isArrow =true)
   drawText2("4#pi #eta/s=3", line_x_end+7, line_y-line_y_diff*2-0.038 - line_y_diff_in*2, 22);
 
   drawText2("Krouppa, Strickland",line_x_start,line_y+0.034,22);
-
+*/
   //Global Unc.
   TFile* fppInt = new TFile("../fitResults/Constrain/fitresults_upsilon_fixParm1_seed2_DoubleCB_PP_DATA_pt0.0-30.0_y0.0-2.4_muPt4.0.root");
   TH1D* hppInt = (TH1D*) fppInt -> Get("fitResults");
@@ -502,8 +497,8 @@ void strickland_RAA_cent_newglobal_all_asym_postCWRConstrain(bool isArrow =true)
   globtex->DrawLatex(0.5*(1-0.032*600/xlonger), sz_init-sz_step*2-sz_allign, "0-100%");
 
 	c1->Update();
-  c1->SaveAs(Form("plots/Strickland_RAA_vs_cent_isArrow%d_all_newglobal_asym_postCWRConstrain.png",(int)isArrow));
-  c1->SaveAs(Form("plots/Strickland_RAA_vs_cent_isArrow%d_all_newglobal_asym_postCWRConstrain.pdf",(int)isArrow));
+  c1->SaveAs(Form("plots/Rapp_RAA_vs_cent_isArrow%d_all_newglobal_asym_postCWRConstrain.png",(int)isArrow));
+  c1->SaveAs(Form("plots/Rapp_RAA_vs_cent_isArrow%d_all_newglobal_asym_postCWRConstrain.pdf",(int)isArrow));
 /*
 	///////////////////////////////////////////////////////////////////
 	//// save as a root file

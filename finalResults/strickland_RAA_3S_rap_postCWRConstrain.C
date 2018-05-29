@@ -1,12 +1,13 @@
 #include "SONGKYO.h"
 #include "tdrstyle.C"
-#include "CMS_lumi_raaCent.C"
+#include "CMS_lumi.C"
 #include "../cutsAndBin.h"
+#include "../commonUtility.h"
 
-void draw_RAA_rap_isArrow_asym_postCWRConstrain(bool isArrow=true)
+void strickland_RAA_3S_rap_postCWRConstrain(bool isArrow=true)
 {
   setTDRStyle();
-  writeExtraText = false;       // if extra text
+  writeExtraText = true;       // if extra text
   int iPeriod = 101; // 1: pp, 2: pPb, 3: PbPb, 100: RAA vs cent, 101: RAA vs pt or rap
   int iPos = 33;
   
@@ -105,17 +106,22 @@ void draw_RAA_rap_isArrow_asym_postCWRConstrain(bool isArrow=true)
   globtex->SetTextAlign(12); //left-center
   globtex->SetTextFont(42);
   globtex->SetTextSize(0.040);
-  
+
+    TF1 *tx = new TF1("f1","1",0,xmax);
+    tx->SetLineWidth(1);
+    tx->SetLineStyle(7);
+    tx->SetLineColor(1);
+
   //// axis et. al
-  gRAA_sys[0]->GetXaxis()->SetTitle("|y|");
-  gRAA_sys[0]->GetXaxis()->CenterTitle();
-  gRAA_sys[0]->GetYaxis()->SetTitle("R_{AA}");
-  gRAA_sys[0]->GetYaxis()->CenterTitle();
-  gRAA_sys[0]->GetXaxis()->SetLimits(0.,xmax);
-  gRAA_sys[0]->SetMinimum(0.0);
-  gRAA_sys[0]->SetMaximum(1.14);
+  tx->GetXaxis()->SetTitle("|y|");
+  tx->GetXaxis()->CenterTitle();
+  tx->GetYaxis()->SetTitle("R_{AA}");
+  tx->GetYaxis()->CenterTitle();
+  tx->GetXaxis()->SetLimits(0.,xmax);
+  tx->SetMinimum(0.0);
+  tx->SetMaximum(1.);
   /// for rap
-  gRAA_sys[0]->GetXaxis()->SetNdivisions(505);
+  tx->GetXaxis()->SetNdivisions(505);
   if (isArrow == true){
         gRAA_sys[2]->SetPoint(0,-10,-10);
         gRAA_sys[2]->SetPointError(0,0,0);
@@ -132,19 +138,18 @@ void draw_RAA_rap_isArrow_asym_postCWRConstrain(bool isArrow=true)
         gRAA_sys[2]->GetHistogram()->GetXaxis()->SetLimits(0,30);
         gRAA_sys[2]->GetHistogram()->GetXaxis()->SetRangeUser(0,30);
         gRAA_sys[2]->SetMinimum(0.0);
-        gRAA_sys[2]->SetMaximum(1.3);
+        gRAA_sys[2]->SetMaximum(1.);
         gRAA[2]->GetHistogram()->GetXaxis()->SetRangeUser(0,30);
         gRAA[2]->GetHistogram()->GetXaxis()->SetLimits(0,30);
         gRAA[2]->SetMinimum(0.0);
-        gRAA[2]->SetMaximum(1.3);
+        gRAA[2]->SetMaximum(1.);
       }
  
   //// draw  
   TCanvas* c1 = new TCanvas("c1","c1",600,600);
-  gPad->SetBottomMargin(0.14);
-  gPad->SetTopMargin(0.067);
   //// syst
-  for (int is=0; is<nState; is++){
+  tx->Draw();
+  for (int is=2; is<nState; is++){
     if ( is==0) {gRAA_sys[is]->Draw("A5");}
     else if (is==ulstate && isArrow==true) {
       for (int ipt=0; ipt< n3s ; ipt++) { //bin by bin
@@ -155,7 +160,7 @@ void draw_RAA_rap_isArrow_asym_postCWRConstrain(bool isArrow=true)
     else { gRAA_sys[is]->Draw("5");}
 	}
   //// point
-  for (int is=0; is<nState; is++){
+  for (int is=2; is<nState; is++){
     if (is==ulstate && isArrow==true) {
       for (int ipt=0; ipt< n3s ; ipt++) { //bin by bin
         arr95per[ipt]->Draw();
@@ -164,32 +169,31 @@ void draw_RAA_rap_isArrow_asym_postCWRConstrain(bool isArrow=true)
     }
     else { gRAA[is]->Draw("P");}
 	}
-  dashedLine(0.,1.,xmax,1.,1,1);
   
   //// legend
-  TLegend *leg= new TLegend(0.57, 0.62, 0.785, 0.74);
+  TLegend *leg= new TLegend(0.64, 0.62, 0.855, 0.74);
   SetLegendStyle(leg);
-  TLegend *leg_up= new TLegend(0.57, 0.50, 0.78, 0.62);
+  TLegend *leg_up= new TLegend(0.64, 0.50, 0.85, 0.62);
   SetLegendStyle(leg_up);
 
-  TArrow *arrLeg = new TArrow(1.285,0.532,1.285,0.582,0.02,"<-|");
+  TArrow *arrLeg = new TArrow(1.49,0.452,1.49,0.502,0.02,"<-|");
   arrLeg->SetLineColor(kGreen+2);
   arrLeg->SetLineWidth(2);
 
   if (isArrow==false) { 
     for (int is=0; is<nState; is++){
-      leg -> AddEntry(gRAA[is],Form(" #varUpsilon(%dS)",is+1),"lp");
+      leg -> AddEntry(gRAA[is],Form(" #Upsilon(%dS)",is+1),"lp");
     }
   }
   else {
-    leg -> AddEntry(gRAA[0]," #varUpsilon(1S)","lp");
-    leg -> AddEntry(gRAA[1]," #varUpsilon(2S)","lp");
+ //   leg -> AddEntry(gRAA[0]," #Upsilon(1S)","lp");
+  //  leg -> AddEntry(gRAA[1]," #Upsilon(2S)","lp");
 //    leg -> AddEntry(gRAA[2]," #Upsilon(3S)","lp");
-    TLegendEntry *ent=leg_up->AddEntry("ent"," #varUpsilon(3S) 68\% CL","f");
+    TLegendEntry *ent=leg_up->AddEntry("ent"," #Upsilon(3S) 68\% CL","f");
     ent->SetLineColor(kGreen+3);
     ent->SetFillColorAlpha(kGreen-6,0.5);
     ent->SetFillStyle(1001);
-    ent=leg_up->AddEntry("ent"," #varUpsilon(3S) 95\% CL","f");
+    ent=leg_up->AddEntry("ent"," #Upsilon(3S) 95\% CL","f");
     ent->SetLineColor(kWhite);
 //    leg_up->SetTextSize(0.03);
     leg->Draw("same");
@@ -198,16 +202,125 @@ void draw_RAA_rap_isArrow_asym_postCWRConstrain(bool isArrow=true)
   }
 
   //// draw text
-  double sz_init = 0.925; double sz_step = 0.0535;
+  double sz_init = 0.942; double sz_step = 0.0535;
 //  globtex->DrawLatex(0.22, sz_init, "p_{T}^{#mu} > 4 GeV/c");
   globtex->DrawLatex(0.22, sz_init-sz_step, "p_{T} < 30 GeV");
 //  globtex->DrawLatex(0.22, sz_init-sz_step, "|y|^{#mu#mu} < 2.4");
 //  globtex->DrawLatex(0.22, sz_init-sz_step*2, "|#eta^{#mu}| < 2.4");
   globtex->DrawLatex(0.22, sz_init-sz_step*2, "Cent. 0-100%");
   
+  TFile *fstrickland = new TFile("TheoryCurve/StrickLand_RAA_5023.root","READ");
+  
+  TGraphErrors *gRAA_1S_strickland[3]; 
+  TGraphErrors *gRAA_2S_strickland[3]; 
+  
+  for(int i=0;i<3;i++)
+  {
+    gRAA_1S_strickland[i] = (TGraphErrors*) fstrickland-> Get(Form("RAA_strick_rap_1S_%d",i));
+    gRAA_2S_strickland[i] = (TGraphErrors*) fstrickland-> Get(Form("RAA_strick_rap_2S_%d",i));
+    gRAA_1S_strickland[i] -> SetLineWidth(3.);
+    gRAA_2S_strickland[i] -> SetLineWidth(3.0);
+  }
+  gRAA_1S_strickland[0]->SetLineColor(kRed+3);
+  gRAA_1S_strickland[1]->SetLineColor(kRed+3);
+  gRAA_1S_strickland[2]->SetLineColor(kRed+3);
+  gRAA_1S_strickland[0]->SetLineStyle(3);
+  gRAA_1S_strickland[1]->SetLineStyle(1);
+  gRAA_1S_strickland[2]->SetLineStyle(8);
+  
+  gRAA_2S_strickland[0]->SetLineColor(kBlue+3);
+  gRAA_2S_strickland[1]->SetLineColor(kBlue+3);
+  gRAA_2S_strickland[2]->SetLineColor(kBlue+3);
+  gRAA_2S_strickland[0]->SetLineStyle(3);
+  gRAA_2S_strickland[1]->SetLineStyle(1);
+  gRAA_2S_strickland[2]->SetLineStyle(8);
+  
+
+//  for(int i=0;i<3;i++){
+//    gRAA_1S_strickland[i]->Draw("same");
+//    gRAA_2S_strickland[i]->Draw("same");
+//  }
+
+//3S theory
+const int npt = 35;
+
+TGraphErrors* g3S = new TGraphErrors("TheoryCurve/Y3Srapidity5023Xi0.tsv","%lg %lg %lg %lg","\t");
+
+int nPts = g3S->GetN();
+cout<<"Number of Points: "<<nPts<<endl;
+double y3S_1[npt];
+double y3S_2[npt];
+double y3S_3[npt];
+
+
+for(int i=0;i< nPts; i++){
+    y3S_1[i]=g3S->GetY()[i];
+    y3S_2[i]=g3S->GetErrorX(i);
+    y3S_3[i]=g3S->GetErrorY(i);
+}
+
+
+TGraph* g1t = new TGraph(g3S->GetN(),g3S->GetX(),y3S_1);
+TGraph* g2t = new TGraph(g3S->GetN(),g3S->GetX(),y3S_2);
+TGraph* g3t = new TGraph(g3S->GetN(),g3S->GetX(),y3S_2);
+
+g1t->Draw("same");
+g1t->SetLineWidth(3);
+g1t->SetLineStyle(3);
+g1t->SetLineColor(kGreen+2);
+g2t->Draw("SAME");
+g2t->SetLineWidth(3);
+g2t->SetLineStyle(1);
+g2t->SetLineColor(kGreen+2);
+g3t->Draw("SAME");
+g3t->SetLineWidth(3);
+g3t->SetLineColor(kGreen+2);
+g3t->SetLineStyle(8);
+
+
+
+
+  TLegend *leg_strick= new TLegend(0.2, 0.546, 0.4, 0.676);
+  SetLegendStyle(leg_strick);
+  leg_strick->SetTextSize(0.04);
+  leg_strick->AddEntry(gRAA_1S_strickland[2],"Y(1S)","l");
+  leg_strick->AddEntry(gRAA_2S_strickland[2],"Y(2S)","l");
+//  leg_strick->Draw("same");
+
+
+  double line_y = 0.497;
+  double line_y_diff = 0.07;
+  double line_x_end = 0.33;
+  double line_x_start = 0.2;
+  TLine* t1 = new TLine(line_x_start,line_y,line_x_end,line_y);
+  t1->SetLineStyle(3);
+  t1->SetLineWidth(2);
+  t1->SetLineColor(kGreen+2);
+  t1->Draw("same");
+
+  TLine* t2 = new TLine(line_x_start,line_y-line_y_diff,line_x_end,line_y-line_y_diff);
+  t2->SetLineStyle(1);
+  t2->SetLineWidth(2);
+  t2->SetLineColor(kGreen+2);
+  t2->Draw("same");
+
+  TLine* t3 = new TLine(line_x_start,line_y-line_y_diff*2,line_x_end,line_y-line_y_diff*2);
+  t3->SetLineStyle(8);
+  t3->SetLineWidth(2);
+  t3->SetLineColor(kGreen+2);
+  t3->Draw("same");
+
+  drawText2("4#pi #eta/s=1", line_x_end+0.07, line_y-0.015, 22);
+  drawText2("4#pi #eta/s=2", line_x_end+0.07, line_y-line_y_diff*1-0.015, 22);
+  drawText2("4#pi #eta/s=3", line_x_end+0.07, line_y-line_y_diff*2-0.015, 22);
+
+  drawText2("Krouppa, Strickland",line_x_start,line_y+0.05,22);
+  
+
   //Global Unc.
-  double TAA_unc_Global_Hi = 0.028;
-  double TAA_unc_Global_Lo = 0.034;
+  double TAA_unc_Global_Hi = 0.068;
+  double TAA_unc_Global_Lo = 0.072;
+
   double sys_global_val_Hi = TMath::Sqrt(lumi_unc_pp*lumi_unc_pp+TAA_unc_Global_Hi*TAA_unc_Global_Hi+nMB_unc*nMB_unc);
   double sys_global_val_Lo = TMath::Sqrt(lumi_unc_pp*lumi_unc_pp+TAA_unc_Global_Lo*TAA_unc_Global_Lo+nMB_unc*nMB_unc);
   double sys_global_y_Hi = sys_global_val_Hi;
@@ -217,13 +330,13 @@ void draw_RAA_rap_isArrow_asym_postCWRConstrain(bool isArrow=true)
   globalUncBox -> SetLineColor(kBlack);
   globalUncBox -> SetFillColorAlpha(kGray+2,0.6);
   globalUncBox -> SetLineWidth(1);
-  globalUncBox -> Draw("l same");
+ // globalUncBox -> Draw("l same");
   
-  CMS_lumi_raaCent( c1, iPeriod, iPos );
+  CMS_lumi( c1, iPeriod, iPos );
 
 	c1->Update();
-  c1->SaveAs(Form("plots/RAA_vs_rap_isArrow%d_asym_postCWRConstrain.pdf",(int)isArrow));
-  c1->SaveAs(Form("plots/RAA_vs_rap_isArrow%d_asym_postCWRConstrain.png",(int)isArrow));
+  c1->SaveAs("plots/Strickland_RAA_vs_rap_3S_postCWRConstrain.pdf");
+  c1->SaveAs("plots/Strickland_RAA_vs_rap_3S_postCWRConstrain.png");
 
 /*
 	///////////////////////////////////////////////////////////////////

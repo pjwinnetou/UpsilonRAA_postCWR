@@ -6,7 +6,7 @@
 void draw_RAA_cent_newglobal_asym_postCWRConstrain(bool isArrow =true)
 {
   setTDRStyle();
-  writeExtraText = false;       // if extra text
+  writeExtraText = true;       // if extra text
   int iPeriod = 100; // 1: pp, 2: pPb, 3: PbPb, 100: RAA vs cent, 101: RAA vs pt or rap
   int iPos = 33;
   
@@ -279,9 +279,9 @@ void draw_RAA_cent_newglobal_asym_postCWRConstrain(bool isArrow =true)
   //// draw text
   double sz_init = 0.874; double sz_step = 0.0558;
 //  globtex->DrawLatex(0.22+0.04, sz_init, "p_{T}^{#mu} > 4 GeV/c");
-  globtex->DrawLatex(0.22+0.04, sz_init, "p_{T}^{#varUpsilon} < 30 GeV");
+  globtex->DrawLatex(0.22+0.04, sz_init, "p_{T} < 30 GeV");
 //  globtex->DrawLatex(0.46+0.04, sz_init+0.002, "|#eta|^{#mu} < 2.4");
-  globtex->DrawLatex(0.22+0.04, sz_init-sz_step, "|y^{#varUpsilon}| < 2.4");
+  globtex->DrawLatex(0.22+0.04, sz_init-sz_step, "|y| < 2.4");
 /*
   TLatex* centtex = new TLatex();
   centtex->SetNDC();
@@ -316,7 +316,7 @@ void draw_RAA_cent_newglobal_asym_postCWRConstrain(bool isArrow =true)
   TH1D* hSys_glb_acc[nState];
   for(int is=0; is<nState; is++){
     hSys_glb[is] = (TH1D*) fInSys_Lo[is]->Get("hintPP_merged");
-    f_acc[is] = new TFile(Form("../acceptance/sys_acceptance_ups%dS_170622.root",is+1));
+    f_acc[is] = new TFile(Form("../acceptance/sys_acceptance_ups%dS_1804.root",is+1));
     hSys_glb_acc[is] = (TH1D*) f_acc[is]->Get("hcentSysPP");
     accept_sys = hSys_glb_acc[is]->GetBinContent(1);
     sys_global_pp[is] = TMath::Sqrt(hSys_glb[is]->GetBinContent(1)*hSys_glb[is]->GetBinContent(1)+accept_sys*accept_sys);
@@ -395,8 +395,8 @@ void draw_RAA_cent_newglobal_asym_postCWRConstrain(bool isArrow =true)
   globtex->DrawLatex(0.5*(1-0.032*600/xlonger), sz_init-sz_step*2-sz_allign, "0-100%");
 
 	c1->Update();
-  c1->SaveAs(Form("RAA_vs_cent_isArrow%d_newglobal_asym_postCWRConstrain.pdf",(int)isArrow));
-  c1->SaveAs(Form("RAA_vs_cent_isArrow%d_newglobal_asym_postCWRConstrain.png",(int)isArrow));
+  c1->SaveAs(Form("plots/RAA_vs_cent_isArrow%d_newglobal_asym_postCWRConstrain.pdf",(int)isArrow));
+  c1->SaveAs(Form("plots/RAA_vs_cent_isArrow%d_newglobal_asym_postCWRConstrain.png",(int)isArrow));
 
 /*
 	///////////////////////////////////////////////////////////////////

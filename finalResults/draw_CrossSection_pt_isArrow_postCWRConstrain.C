@@ -16,7 +16,7 @@ void draw_CrossSection_pt_isArrow_postCWRConstrain(int ppAA=1, bool isArrow=fals
 //  double relsys = 0.1;
 
   double exsys_1s[6] =  {1., 1., 1., 1.5, 1.5, 9.};
-  double exsys_2s[3] =  {2., 2.5, 10.5};
+  double exsys_2s[3] =  {2, 2.5, 10.5};
   double exsys_3s[2] =  {3.,18.};
 
   TString sz_ppAA;
@@ -126,10 +126,10 @@ void draw_CrossSection_pt_isArrow_postCWRConstrain(int ppAA=1, bool isArrow=fals
 //  }
   
   //// axis et. al
-  gCrossSection_sys[0]->GetXaxis()->SetTitle("p_{T}^{#varUpsilon} (GeV/c)");
+  gCrossSection_sys[0]->GetXaxis()->SetTitle("p_{T} (GeV)");
   gCrossSection_sys[0]->GetXaxis()->CenterTitle();
-  if (ppAA==1) gCrossSection_sys[0]->GetYaxis()->SetTitle("B #frac{d#sigma}{ dp_{T}} (nb/ GeV/c)");
-  else gCrossSection_sys[0]->GetYaxis()->SetTitle("B #frac{1}{T_{AA}} #frac{dN}{ dp_{T}} (nb/ GeV/c)");
+  if (ppAA==1) gCrossSection_sys[0]->GetYaxis()->SetTitle("B #frac{d^{2}#sigma}{dy dp_{T}} (nb/ GeV)");
+  else gCrossSection_sys[0]->GetYaxis()->SetTitle("B #frac{1}{T_{AA}} #frac{d^{2}N}{dy dp_{T}} (nb/ GeV)");
   gCrossSection_sys[0]->GetYaxis()->CenterTitle();
   gCrossSection_sys[0]->GetYaxis()->SetTitleOffset(2.0);
   gCrossSection_sys[0]->GetYaxis()->SetTitleSize(0.045);
@@ -240,7 +240,7 @@ void draw_CrossSection_pt_isArrow_postCWRConstrain(int ppAA=1, bool isArrow=fals
   else sz_shift=0.0;
 //  globtex->DrawLatex(0.27, sz_init-sz_shift, "p_{T}^{#mu} > 4 GeV/c");
 //  globtex->DrawLatex(0.22, sz_init, "p_{T}^{#mu#mu} < 30 GeV/c");
-  globtex->DrawLatex(0.27, sz_init-sz_shift-sz_step, "|y^{#varUpsilon}| < 2.4");
+  globtex->DrawLatex(0.27, sz_init-sz_shift-sz_step, "|y| < 2.4");
 //  globtex->DrawLatex(0.27, sz_init-sz_shift-sz_step*2, "|#eta^{#mu}| < 2.4");
   if(ppAA==2) globtex->DrawLatex(0.27, sz_init-sz_shift-sz_step*2, "Cent. 0-100%");
   
@@ -249,12 +249,12 @@ void draw_CrossSection_pt_isArrow_postCWRConstrain(int ppAA=1, bool isArrow=fals
   CMS_lumi( c1, ppAA, iPos );
 
 	c1->Update();
-  c1->SaveAs(Form("CrossSection_vs_pt_%s_postCWRConstrain.pdf",sz_ppAA.Data()));
-  c1->SaveAs(Form("CrossSection_vs_pt_%s_postCWRConstrain.png",sz_ppAA.Data()));
+  c1->SaveAs(Form("plots/CrossSection_vs_pt_%s_postCWRConstrain.pdf",sz_ppAA.Data()));
+  c1->SaveAs(Form("plots/CrossSection_vs_pt_%s_postCWRConstrain.png",sz_ppAA.Data()));
 
 	///////////////////////////////////////////////////////////////////
 	//// save as a root file
-	TFile *outFile = new TFile("CrossSection_vs_pt_postCWRConstrain.root", "RECREATE");
+	TFile *outFile = new TFile("plots/CrossSection_vs_pt_postCWRConstrain.root", "RECREATE");
 	outFile->cd();
 	for (int is=0; is<nState; is++){
 		gCrossSection_sys[is]->Write();	

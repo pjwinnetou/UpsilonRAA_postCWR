@@ -130,7 +130,7 @@ void draw_CrossSection_rap_isArrow_postCWRConstrain(int ppAA=1, bool isArrow=fal
 
   
   //// axis et. al
-  gCrossSection_sys[0]->GetXaxis()->SetTitle("|y^{#varUpsilon}|");
+  gCrossSection_sys[0]->GetXaxis()->SetTitle("|y|");
   gCrossSection_sys[0]->GetXaxis()->CenterTitle();
   if (ppAA==1) gCrossSection_sys[0]->GetYaxis()->SetTitle("B #frac{d#sigma}{dy} (nb)");
   else gCrossSection_sys[0]->GetYaxis()->SetTitle("B #frac{1}{T_{AA}} #frac{dN}{dy} (nb)");
@@ -234,7 +234,7 @@ void draw_CrossSection_rap_isArrow_postCWRConstrain(int ppAA=1, bool isArrow=fal
   if (ppAA==1) sz_shift=0.0;
   else sz_shift=0.0;
 //  globtex->DrawLatex(0.27, sz_init-sz_shift, "p_{T}^{#mu} > 4 GeV/c");
-  globtex->DrawLatex(0.27, sz_init-sz_shift-sz_step, "p_{T}^{#varUpsilon} < 30 GeV");
+  globtex->DrawLatex(0.27, sz_init-sz_shift-sz_step, "p_{T} < 30 GeV");
 //  globtex->DrawLatex(0.27, sz_init-sz_shift-sz_step, "|y|^{#mu#mu} < 2.4");
 //  globtex->DrawLatex(0.27, sz_init-sz_shift-sz_step*2, "|#eta^{#mu}| < 2.4");
   if(ppAA==2) globtex->DrawLatex(0.27, sz_init-sz_shift-sz_step*2, "Cent. 0-100%");
@@ -244,12 +244,12 @@ void draw_CrossSection_rap_isArrow_postCWRConstrain(int ppAA=1, bool isArrow=fal
   CMS_lumi( c1, ppAA, iPos );
 
 	c1->Update();
-  c1->SaveAs(Form("CrossSection_vs_rap_%s_postCWRConstrain.pdf",sz_ppAA.Data()));
-  c1->SaveAs(Form("CrossSection_vs_rap_%s_postCWRConstrain.png",sz_ppAA.Data()));
+  c1->SaveAs(Form("plots/CrossSection_vs_rap_%s_postCWRConstrain.pdf",sz_ppAA.Data()));
+  c1->SaveAs(Form("plots/CrossSection_vs_rap_%s_postCWRConstrain.png",sz_ppAA.Data()));
 
 	///////////////////////////////////////////////////////////////////
 	//// save as a root file
-	TFile *outFile = new TFile("CrossSection_vs_rap_postCWRConstrain.root", "RECREATE");
+	TFile *outFile = new TFile("plots/CrossSection_vs_rap_postCWRConstrain.root", "RECREATE");
 	outFile->cd();
 	for (int is=0; is<nState; is++){
 		gCrossSection_sys[is]->Write();	

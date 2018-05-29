@@ -4,10 +4,10 @@
 #include "../cutsAndBin.h"
 #include "../commonUtility.h"
 
-void strickland_RAA_cent_newglobal_all_asym_postCWRConstrain(bool isArrow =true)
+void strickland_RAA_cent_newglobal_asym_postCWRConstrain(bool isArrow =true)
 {
   setTDRStyle();
-  writeExtraText = false;       // if extra text
+  writeExtraText = true;       // if extra text
   int iPeriod = 100; // 1: pp, 2: pPb, 3: PbPb, 100: RAA vs cent, 101: RAA vs pt or rap
   int iPos = 33;
   
@@ -19,8 +19,7 @@ void strickland_RAA_cent_newglobal_all_asym_postCWRConstrain(bool isArrow =true)
   double boxw_int = 0.09;
 //  double relsys = 0.1;
 
-
-  ///////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////
   //// read input file : value & stat.
   TFile* fIn[nState];
 	TGraphErrors* gRAA[nState]; // vs centrality
@@ -30,7 +29,7 @@ void strickland_RAA_cent_newglobal_all_asym_postCWRConstrain(bool isArrow =true)
   for (int is=0; is<nState; is++){
   	fIn[is] = new TFile(Form("Ups_%d_RAA.root",is+1),"READ");
     gRAA[is]=(TGraphErrors*)fIn[is]->Get("gRAA_cent");
-    //gRAA_sys[is]=(TGraphErrors*)fIn[is]->Get("gRAA_cent");
+    //gRAA_sys[is]=(TGraphAsymmErrors*)fIn[is]->Get("gRAA_cent");
     gRAA_sys[is]= new TGraphAsymmErrors();
     gRAA_int[is]=(TGraphErrors*)fIn[is]->Get("gRAA_int");
     //gRAA_int_sys[is]=(TGraphAsymmErrors*)fIn[is]->Get("gRAA_int");
@@ -50,7 +49,7 @@ void strickland_RAA_cent_newglobal_all_asym_postCWRConstrain(bool isArrow =true)
   int npoint_int_Lo[nState];
   for (int is=0; is<nState; is++){
     fInSys_Hi[is] = new TFile(Form("../Systematic/postCWR_mergedSys_constrain_ups%ds_asymHi.root",is+1),"READ");
-    fInSys_Lo[is] = new TFile(Form("../Systematic/postCWR_mergedSys_constrain_ups%ds_asymLo.root",is+1),"READ");
+    fInSys_Lo[is] = new TFile(Form("../Systematic/postCWR_mergedSys_constrain_ups%ds_asymHi.root",is+1),"READ");
     hSys_Hi[is]=(TH1D*)fInSys_Hi[is]->Get("hcentRAA_merged");
     hSys_Lo[is]=(TH1D*)fInSys_Lo[is]->Get("hcentRAA_merged");
     npoint_Hi[is] = hSys_Hi[is]->GetSize()-2;
@@ -101,7 +100,6 @@ void strickland_RAA_cent_newglobal_all_asym_postCWRConstrain(bool isArrow =true)
   cout << " INTEGRATED" << endl;
   for (int is=0; is<nState; is++){
     cout << is+1 <<"th state***************" << endl;
-  cout << "npoint_int_Lo " << npoint_int_Lo[is] << endl;
     if (npoint_int_Lo[is] != gRAA_int[is]->GetN()) {cout << "Error!! data file and syst. file have different binnig!" << endl; return; }    
     for (int ipt=0; ipt< npoint_int_Lo[is] ; ipt++) {
       pxtmp=0; pytmp=0; extmp=0; eytmp=0;
@@ -253,7 +251,7 @@ void strickland_RAA_cent_newglobal_all_asym_postCWRConstrain(bool isArrow =true)
   
   if (isArrow==false) { 
     for (int is=0; is<nState; is++){
-      leg -> AddEntry(gRAA[is],Form(" #varUpsilon(%dS)",is+1),"lp");
+      leg -> AddEntry(gRAA[is],Form(" #Upsilon(%dS)",is+1),"lp");
     }
   }
   else {
@@ -271,44 +269,20 @@ void strickland_RAA_cent_newglobal_all_asym_postCWRConstrain(bool isArrow =true)
   
   //// draw text
   double sz_init = 0.874; double sz_step = 0.0558;
-//  globtex->DrawLatex(0.22+0.04, sz_init, "p_{T}^{#mu} > 4 GeV/c");
   globtex->DrawLatex(0.22+0.1, sz_init, "p_{T} < 30 GeV");
-//  globtex->DrawLatex(0.46+0.04, sz_init+0.002, "|#eta|^{#mu} < 2.4");
   globtex->DrawLatex(0.22+0.1, sz_init-sz_step, "|y| < 2.4");
-/*
-  TLatex* centtex = new TLatex();
-  centtex->SetNDC();
-  centtex->SetTextAlign(12); //left-center
-  centtex->SetTextFont(42);
-  centtex->SetTextSize(0.029);
-
-  centtex->DrawLatex(0.908,0.37,"0-5%");
-  centtex->DrawLatex(0.802,0.37,"5-10%");
-  centtex->DrawLatex(0.666,0.37,"10-20%");
-  centtex->DrawLatex(0.518,0.421,"20-30%");
-  centtex->DrawLatex(0.403,0.465,"30-40%");
-  centtex->DrawLatex(0.318,0.495,"40-50%");
-  centtex->DrawLatex(0.258,0.555,"50-60%");
-  centtex->DrawLatex(0.242,0.698,"60-70%");
-  centtex->DrawLatex(0.181,0.781,"70-100%");
-*/
-
-//  globtex->DrawLatex(0.22, sz_init-sz_step*2, "Centrality 0-100%");
 
   TFile *fstrickland = new TFile("TheoryCurve/StrickLand_RAA_5023.root","READ");
   
   TGraphErrors *gRAA_1S_strickland[3]; 
   TGraphErrors *gRAA_2S_strickland[3]; 
-  TGraphErrors *gRAA_3S_strickland[3]; 
   
   for(int i=0;i<3;i++)
   {
     gRAA_1S_strickland[i] = (TGraphErrors*) fstrickland-> Get(Form("RAA_strick_nPart_1S_%d",i));
     gRAA_2S_strickland[i] = (TGraphErrors*) fstrickland-> Get(Form("RAA_strick_nPart_2S_%d",i));
-    gRAA_3S_strickland[i] = (TGraphErrors*) fstrickland-> Get(Form("RAA_strick_nPart_3S_%d",i));
     gRAA_1S_strickland[i] -> SetLineWidth(3.);
     gRAA_2S_strickland[i] -> SetLineWidth(3.0);
-    gRAA_3S_strickland[i] -> SetLineWidth(3);
   }
   gRAA_1S_strickland[0]->SetLineColor(kRed+3);
   gRAA_1S_strickland[1]->SetLineColor(kRed+3);
@@ -324,18 +298,10 @@ void strickland_RAA_cent_newglobal_all_asym_postCWRConstrain(bool isArrow =true)
   gRAA_2S_strickland[1]->SetLineStyle(1);
   gRAA_2S_strickland[2]->SetLineStyle(8);
   
-  gRAA_3S_strickland[0]->SetLineColor(kGreen+2);
-  gRAA_3S_strickland[1]->SetLineColor(kGreen+2);
-  gRAA_3S_strickland[2]->SetLineColor(kGreen+2);
-  gRAA_3S_strickland[0]->SetLineStyle(3);
-  gRAA_3S_strickland[1]->SetLineStyle(1);
-  gRAA_3S_strickland[2]->SetLineStyle(8);
-  
 
   for(int i=0;i<3;i++){
     gRAA_1S_strickland[i]->Draw("same");
     gRAA_2S_strickland[i]->Draw("same");
-    gRAA_3S_strickland[i]->Draw("same");
   }
    
   TLegend *leg_strick= new TLegend(0.29, 0.586, 0.46, 0.716);
@@ -362,12 +328,6 @@ void strickland_RAA_cent_newglobal_all_asym_postCWRConstrain(bool isArrow =true)
   t11->SetLineColor(kBlue-3);
   t11->Draw("same");
 
-  TLine* t111 = new TLine(line_x_start,line_y-line_y_diff_in*2,line_x_end,line_y-line_y_diff_in*2);
-  t111->SetLineStyle(3);
-  t111->SetLineWidth(2);
-  t111->SetLineColor(kGreen+2);
-  t111->Draw("same");
-
   TLine* t2 = new TLine(line_x_start,line_y-line_y_diff-line_y_diff_in,line_x_end,line_y-line_y_diff-line_y_diff_in);
   t2->SetLineStyle(1);
   t2->SetLineWidth(2);
@@ -380,12 +340,6 @@ void strickland_RAA_cent_newglobal_all_asym_postCWRConstrain(bool isArrow =true)
   t22->SetLineColor(kBlue-3);
   t22->Draw("same");
 
-  TLine* t222 = new TLine(line_x_start,line_y-line_y_diff-line_y_diff_in*3,line_x_end,line_y-line_y_diff-line_y_diff_in*3);
-  t222->SetLineStyle(1);
-  t222->SetLineWidth(2);
-  t222->SetLineColor(kGreen+2);
-  t222->Draw("same");
-
   TLine* t3 = new TLine(line_x_start,line_y-line_y_diff*2-line_y_diff_in*2,line_x_end,line_y-line_y_diff*2-line_y_diff_in*2);
   t3->SetLineStyle(8);
   t3->SetLineWidth(2);
@@ -397,12 +351,6 @@ void strickland_RAA_cent_newglobal_all_asym_postCWRConstrain(bool isArrow =true)
   t33->SetLineWidth(2);
   t33->SetLineColor(kBlue-3);
   t33->Draw("same");
-
-  TLine* t333 = new TLine(line_x_start,line_y-line_y_diff*2-line_y_diff_in*4,line_x_end,line_y-line_y_diff*2-line_y_diff_in*4);
-  t333->SetLineStyle(8);
-  t333->SetLineWidth(2);
-  t333->SetLineColor(kGreen+2);
-  t333->Draw("same");
 
 
   drawText2("4#pi #eta/s=1", line_x_end+7, line_y-0.038, 22);
@@ -502,8 +450,8 @@ void strickland_RAA_cent_newglobal_all_asym_postCWRConstrain(bool isArrow =true)
   globtex->DrawLatex(0.5*(1-0.032*600/xlonger), sz_init-sz_step*2-sz_allign, "0-100%");
 
 	c1->Update();
-  c1->SaveAs(Form("plots/Strickland_RAA_vs_cent_isArrow%d_all_newglobal_asym_postCWRConstrain.png",(int)isArrow));
-  c1->SaveAs(Form("plots/Strickland_RAA_vs_cent_isArrow%d_all_newglobal_asym_postCWRConstrain.pdf",(int)isArrow));
+  c1->SaveAs(Form("plots/Strickland_RAA_vs_cent_isArrow%d_newglobal_asym_postCWRConstrain.png",(int)isArrow));
+  c1->SaveAs(Form("plots/Strickland_RAA_vs_cent_isArrow%d_newglobal_asym_postCWRConstrain.pdf",(int)isArrow));
 /*
 	///////////////////////////////////////////////////////////////////
 	//// save as a root file

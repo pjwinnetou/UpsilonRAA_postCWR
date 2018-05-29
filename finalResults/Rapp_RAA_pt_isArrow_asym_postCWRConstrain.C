@@ -2,11 +2,12 @@
 #include "tdrstyle.C"
 #include "CMS_lumi_raaCent.C"
 #include "../cutsAndBin.h"
+#include "../commonUtility.h"
 
-void draw_RAA_pt_isArrow_asym_postCWRConstrain(bool isArrow=true)
+void Rapp_RAA_pt_isArrow_asym_postCWRConstrain(bool isArrow=true)
 {
   setTDRStyle();
-  writeExtraText = false;       // if extra text
+  writeExtraText = true;       // if extra text
   int iPeriod = 101; // 1: pp, 2: pPb, 3: PbPb, 100: RAA vs cent, 101: RAA vs pt or rap
   int iPos = 33;
   
@@ -144,7 +145,7 @@ void draw_RAA_pt_isArrow_asym_postCWRConstrain(bool isArrow=true)
   TCanvas* c1 = new TCanvas("c1","c1",600,600);
   gPad->SetBottomMargin(0.14);
   gPad->SetTopMargin(0.067);
-  for (int is=0; is<nState; is++){
+  for (int is=0; is<nState-1; is++){
     if ( is==0) {gRAA_sys[is]->Draw("A5");}
     else if(is==ulstate && isArrow==true) {
       for(int ipt=0;ipt<n3s;ipt++){
@@ -154,7 +155,7 @@ void draw_RAA_pt_isArrow_asym_postCWRConstrain(bool isArrow=true)
     }
     else {gRAA_sys[is]->Draw("5");}
   }
-  for(int is=0;is<nState;is++){
+  for(int is=0;is<nState-1;is++){
     if(is==ulstate && isArrow==true) {
       for(int ipt=0;ipt<n3s;ipt++) {
         arr95per[ipt]->Draw();
@@ -165,12 +166,12 @@ void draw_RAA_pt_isArrow_asym_postCWRConstrain(bool isArrow=true)
   }
   
   dashedLine(0.,1.,xmax,1.,1,1);
-  TLegend *leg= new TLegend(0.57, 0.62, 0.785, 0.74);
+  TLegend *leg= new TLegend(0.64, 0.62, 0.855, 0.74);
   SetLegendStyle(leg);
-  TLegend *leg_up= new TLegend(0.57, 0.50, 0.78, 0.62);
+  TLegend *leg_up= new TLegend(0.64, 0.50, 0.85, 0.62);
   SetLegendStyle(leg_up);
 
-  TArrow *arrLeg = new TArrow(16.,0.532,16.,0.582,0.02,"<-|");
+  TArrow *arrLeg = new TArrow(18.59,0.532,18.59,0.582,0.02,"<-|");
   arrLeg->SetLineColor(kGreen+2);
   arrLeg->SetLineWidth(2);
 
@@ -187,12 +188,12 @@ void draw_RAA_pt_isArrow_asym_postCWRConstrain(bool isArrow=true)
     ent->SetLineColor(kGreen+3);
     ent->SetFillColorAlpha(kGreen-6,0.5);
     ent->SetFillStyle(1001);
-    ent=leg_up->AddEntry("ent"," #varUpsilon(3S) 95\% CL","f");
+    ent=leg_up->AddEntry("ent"," #Upsilon(3S) 95\% CL","f");
     ent->SetLineColor(kWhite);
 //    leg_up->SetTextSize(0.03);
     leg->Draw("same");
-    leg_up->Draw("same");
-    arrLeg->Draw();
+//    leg_up->Draw("same");
+//    arrLeg->Draw();
   }
 
 
@@ -203,10 +204,198 @@ void draw_RAA_pt_isArrow_asym_postCWRConstrain(bool isArrow=true)
   globtex->DrawLatex(0.22, sz_init-sz_step, "|y| < 2.4");
 //  globtex->DrawLatex(0.22, sz_init-sz_step*2, "|#eta^{#mu}| < 2.4");
   globtex->DrawLatex(0.22, sz_init-sz_step*2, "Cent. 0-100%");
+
+
   
+  TFile *RappTot = new TFile("TheoryCurve/Rapp_RAA_5023_pt_tot.root","READ");
+  TFile *RappReg = new TFile("TheoryCurve/Rapp_RAA_5023_pt_reg.root","READ");
+  
+  TGraphErrors *gRAA_tot_max[3]; 
+  TGraphErrors *gRAA_tot_min[3]; 
+  TGraphErrors *gRAA_tot_shade[3]; 
+  TGraphErrors *gRAA_reg_max[3]; 
+  TGraphErrors *gRAA_reg_min[3]; 
+  TGraphErrors *gRAA_reg_shade[3]; 
+  
+  for(int i=0;i<3;i++)
+  {
+    gRAA_tot_max[i] = (TGraphErrors*) RappTot-> Get(Form("RAA_rapp_pT_tot_%dS_max",i+1));
+    gRAA_tot_min[i] = (TGraphErrors*) RappTot-> Get(Form("RAA_rapp_pT_tot_%dS_min",i+1));
+    gRAA_tot_shade[i] = (TGraphErrors*) RappTot-> Get(Form("RAA_%ds_pt_tot_shade",i+1));
+    gRAA_tot_max[i] -> SetLineWidth(2.);
+    gRAA_tot_min[i] -> SetLineWidth(2.0);
+    gRAA_tot_shade[i] -> SetLineWidth(2);
+  }
+  for(int i=0;i<3;i++)
+  {
+    gRAA_reg_max[i] = (TGraphErrors*) RappReg-> Get(Form("RAA_rapp_pT_reg_%dS_max",i+1));
+    gRAA_reg_min[i] = (TGraphErrors*) RappReg-> Get(Form("RAA_rapp_pT_reg_%dS_min",i+1));
+    gRAA_reg_shade[i] = (TGraphErrors*) RappReg-> Get(Form("RAA_%ds_pt_reg_shade",i+1));
+    gRAA_reg_max[i] -> SetLineWidth(2.);
+    gRAA_reg_min[i] -> SetLineWidth(2.0);
+    gRAA_reg_shade[i] -> SetLineWidth(2);
+  }
+
+  gRAA_tot_max[0]->SetLineColor(kRed+1);
+  gRAA_tot_max[1]->SetLineColor(kBlue);
+  
+  gRAA_tot_min[0]->SetLineColor(kRed+1);
+  gRAA_tot_min[1]->SetLineColor(kBlue);
+   
+  gRAA_tot_shade[0]->SetFillStyle(3002);
+  gRAA_tot_shade[1]->SetFillStyle(3002);
+  gRAA_tot_shade[0]->SetFillColor(kRed+1);
+  gRAA_tot_shade[1]->SetFillColor(kBlue);
+
+  gRAA_reg_max[0]->SetLineColor(kOrange-3);
+  gRAA_reg_max[1]->SetLineColor(kTeal-5);
+  
+  gRAA_reg_min[0]->SetLineColor(kOrange-3);
+  gRAA_reg_min[1]->SetLineColor(kTeal-5);
+   
+  gRAA_reg_shade[0]->SetFillStyle(3004);
+  gRAA_reg_shade[1]->SetFillStyle(3004);
+  gRAA_reg_shade[0]->SetFillColor(kOrange-3);
+  gRAA_reg_shade[1]->SetFillColor(kTeal-5);
+  
+  gRAA_tot_shade[0]->SetLineColor(kRed+1);
+  gRAA_tot_shade[1]->SetLineColor(kBlue);
+  gRAA_reg_shade[0]->SetLineColor(kOrange-3);
+  gRAA_reg_shade[1]->SetLineColor(kTeal-5);
+
+
+  for(int i=0;i<2;i++){
+    gRAA_tot_shade[i]->Draw("f");
+    gRAA_tot_max[i]->Draw("l");
+    gRAA_tot_min[i]->Draw("l");
+    gRAA_reg_shade[i]->Draw("f");
+    gRAA_reg_max[i]->Draw("l");
+    gRAA_reg_min[i]->Draw("l");
+  }
+  
+  double line_y = 0.827;
+  double line_y_diff = 0.07;
+  double line_y_diff_in = 0.02;
+  double line_x_end = 4.4;
+  double line_x_start = 2.4;
+  double leg_y_text_diff = 0.095;
+  double leg_y_diff = 0.23;
+
+  TLegend *leg_strick= new TLegend(0.22, line_y-leg_y_text_diff-leg_y_diff, 0.42, line_y-leg_y_text_diff);
+  SetLegendStyle(leg_strick);
+  leg_strick->SetTextSize(0.038);
+  leg_strick->AddEntry(gRAA_tot_shade[0],"#varUpsilon(1S) Total","f");
+  leg_strick->AddEntry(gRAA_reg_shade[0],"#varUpsilon(1S) Regeneration","f");
+  leg_strick->AddEntry(gRAA_tot_shade[1],"#varUpsilon(2S) Total","f");
+  leg_strick->AddEntry(gRAA_reg_shade[1],"#varUpsilon(2S) Regeneration","f");
+  leg_strick->Draw("same");
+ 
+  drawText2("X. Du, M. He, R. Rapp",line_x_start,line_y+0.034,20);
+
+/*
+  TLine* t1 = new TLine(line_x_start,line_y,line_x_end,line_y);
+  t1->SetLineStyle(3);
+  t1->SetLineWidth(2);
+  t1->SetLineColor(kRed+3);
+  t1->Draw("same");
+
+  TLine* t11 = new TLine(line_x_start,line_y-line_y_diff_in,line_x_end,line_y-line_y_diff_in);
+  t11->SetLineStyle(3);
+  t11->SetLineWidth(2);
+  t11->SetLineColor(kBlue-3);
+  t11->Draw("same");
+
+  TLine* t111 = new TLine(line_x_start,line_y-line_y_diff_in*2,line_x_end,line_y-line_y_diff_in*2);
+  t111->SetLineStyle(3);
+  t111->SetLineWidth(2);
+  t111->SetLineColor(kGreen+2);
+  t111->Draw("same");
+
+  TLine* t2 = new TLine(line_x_start,line_y-line_y_diff-line_y_diff_in,line_x_end,line_y-line_y_diff-line_y_diff_in);
+  t2->SetLineStyle(1);
+  t2->SetLineWidth(2);
+  t2->SetLineColor(kRed+3);
+  t2->Draw("same");
+
+  TLine* t22 = new TLine(line_x_start,line_y-line_y_diff-line_y_diff_in*2,line_x_end,line_y-line_y_diff-line_y_diff_in*2);
+  t22->SetLineStyle(1);
+  t22->SetLineWidth(2);
+  t22->SetLineColor(kBlue-3);
+  t22->Draw("same");
+
+  TLine* t222 = new TLine(line_x_start,line_y-line_y_diff-line_y_diff_in*3,line_x_end,line_y-line_y_diff-line_y_diff_in*3);
+  t222->SetLineStyle(1);
+  t222->SetLineWidth(2);
+  t222->SetLineColor(kGreen+2);
+  t222->Draw("same");
+
+  TLine* t3 = new TLine(line_x_start,line_y-line_y_diff*2-line_y_diff_in*2,line_x_end,line_y-line_y_diff*2-line_y_diff_in*2);
+  t3->SetLineStyle(8);
+  t3->SetLineWidth(2);
+  t3->SetLineColor(kRed+3);
+  t3->Draw("same");
+
+  TLine* t33 = new TLine(line_x_start,line_y-line_y_diff*2-line_y_diff_in*3,line_x_end,line_y-line_y_diff*2-line_y_diff_in*3);
+  t33->SetLineStyle(8);
+  t33->SetLineWidth(2);
+  t33->SetLineColor(kBlue-3);
+  t33->Draw("same");
+
+  TLine* t333 = new TLine(line_x_start,line_y-line_y_diff*2-line_y_diff_in*4,line_x_end,line_y-line_y_diff*2-line_y_diff_in*4);
+  t333->SetLineStyle(8);
+  t333->SetLineWidth(2);
+  t333->SetLineColor(kGreen+2);
+  t333->Draw("same");
+*/
+/*
+
+  TLine* t1 = new TLine(line_x_start,line_y,line_x_end,line_y);
+  t1->SetLineStyle(3);
+  t1->SetLineWidth(2);
+  t1->SetLineColor(kRed+3);
+  t1->Draw("same");
+
+  TLine* t11 = new TLine(line_x_start,line_y-line_y_diff_in,line_x_end,line_y-line_y_diff_in);
+  t11->SetLineStyle(3);
+  t11->SetLineWidth(2);
+  t11->SetLineColor(kBlue-3);
+  t11->Draw("same");
+
+  TLine* t2 = new TLine(line_x_start,line_y-line_y_diff-line_y_diff_in,line_x_end,line_y-line_y_diff-line_y_diff_in);
+  t2->SetLineStyle(1);
+  t2->SetLineWidth(2);
+  t2->SetLineColor(kRed+3);
+  t2->Draw("same");
+
+  TLine* t22 = new TLine(line_x_start,line_y-line_y_diff-line_y_diff_in*2,line_x_end,line_y-line_y_diff-line_y_diff_in*2);
+  t22->SetLineStyle(1);
+  t22->SetLineWidth(2);
+  t22->SetLineColor(kBlue-3);
+  t22->Draw("same");
+
+  TLine* t3 = new TLine(line_x_start,line_y-line_y_diff*2-line_y_diff_in*2,line_x_end,line_y-line_y_diff*2-line_y_diff_in*2);
+  t3->SetLineStyle(8);
+  t3->SetLineWidth(2);
+  t3->SetLineColor(kRed+3);
+  t3->Draw("same");
+
+  TLine* t33 = new TLine(line_x_start,line_y-line_y_diff*2-line_y_diff_in*3,line_x_end,line_y-line_y_diff*2-line_y_diff_in*3);
+  t33->SetLineStyle(8);
+  t33->SetLineWidth(2);
+  t33->SetLineColor(kBlue-3);
+  t33->Draw("same");
+*/
+  /*drawText2("4#pi #eta/s=1", line_x_end+1, line_y-0.035, 22);
+  drawText2("4#pi #eta/s=2", line_x_end+1, line_y-line_y_diff*1-0.035 - line_y_diff_in, 22);
+  drawText2("4#pi #eta/s=3", line_x_end+1, line_y-line_y_diff*2-0.035 - line_y_diff_in*2, 22);
+
+  drawText2("Krouppa, Strickland",line_x_start,line_y+0.06,22);
+
+*/
+
+
 
   //Global Unc.
- 
   double TAA_unc_Global_Hi = 0.028;
   double TAA_unc_Global_Lo = 0.034;
 
@@ -224,9 +413,20 @@ void draw_RAA_pt_isArrow_asym_postCWRConstrain(bool isArrow=true)
   CMS_lumi_raaCent( c1, iPeriod, iPos );
 
 	c1->Update();
-  c1->SaveAs(Form("plots/RAA_vs_pt_isArrow%d_asym_postCWRConstrain.pdf",(int)isArrow));
-  c1->SaveAs(Form("plots/RAA_vs_pt_isArrow%d_asym_postCWRConstrain.png",(int)isArrow));
+  c1->SaveAs(Form("plots/Rapp_RAA_vs_pt_isArrow%d_asym_postCWRConstrain.pdf",(int)isArrow));
+  c1->SaveAs(Form("plots/Rapp_RAA_vs_pt_isArrow%d_asym_postCWRConstrain.png",(int)isArrow));
 
+/*
+	///////////////////////////////////////////////////////////////////
+	//// save as a root file
+	TFile *outFile = new TFile("RAA_vs_pt.root", "RECREATE");
+	outFile->cd();
+	for (int is=0; is<nState; is++){
+		gRAA_sys[is]->Write();	
+		gRAA[is]->Write();	
+	}
+	outFile->Close();
+*/	
 	return;
 
 } // end of main func.
