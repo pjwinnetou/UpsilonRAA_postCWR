@@ -21,7 +21,7 @@ using namespace std;
 using namespace RooFit;
 void doFitUpsilon_Data_postCWR_PbPbFit_constrained_new(
        int collId = kAADATA,  
-       float ptLow=3, float ptHigh=4, 
+       float ptLow=0, float ptHigh=2, 
        float yLow=0, float yHigh=2.4,
        int cLow=0, int cHigh=200,
        float muPtCut=4.0,
@@ -320,7 +320,7 @@ void doFitUpsilon_Data_postCWR_PbPbFit_constrained_new(
   pad1->Update();
   RooArgList paramList = fitRes2->floatParsFinal();
   RooPlot* legFrame = ws->var("mass")->frame(Name("Fit Results"), Title("Fit Results"));
-  ws->pdf("model")->paramOn(legFrame,Layout(0,.95, .97),Parameters(paramList));
+  ws->pdf("modelc")->paramOn(legFrame,Layout(0,.95, .97),Parameters(paramList));
  // legFrame->findObject(Form("%s_paramBox",ws->pdf("model")->GetName()))->Draw();
              
   

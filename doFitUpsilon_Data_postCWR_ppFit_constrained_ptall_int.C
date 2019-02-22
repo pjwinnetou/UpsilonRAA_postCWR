@@ -19,10 +19,10 @@
 
 using namespace std;
 using namespace RooFit;
-void doFitUpsilon_Data_postCWR_ppFit_constrained(
+void doFitUpsilon_Data_postCWR_ppFit_constrained_ptall_int(
        int collId = kPPDATA,  
-       float ptLow=0, float ptHigh=30, 
-       float yLow=0.0, float yHigh=0.4,
+       float ptLow=0, float ptHigh=4, 
+       float yLow=0., float yHigh=2.4,
        int cLow=0, int cHigh=200,
        float muPtCut=4.0,
        bool fixParameters=1,
@@ -168,7 +168,7 @@ void doFitUpsilon_Data_postCWR_ppFit_constrained(
   if(init_sigma_min <0) init_sigma_min = 0;
   if(init_lambda_min <0) init_lambda_min = 0;
  
-  RooRealVar err_mu("#mu","err_mu",init_mu,  0, 25) ;
+  RooRealVar err_mu("#mu","err_mu",init_mu,  0, 30) ;
   RooRealVar err_sigma("#sigma","err_sigma", init_sigma, 0,25);
   RooRealVar m_lambda("#lambda","m_lambda",  init_lambda, 0,25);
 

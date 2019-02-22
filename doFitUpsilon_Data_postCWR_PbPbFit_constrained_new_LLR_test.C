@@ -19,10 +19,10 @@
 
 using namespace std;
 using namespace RooFit;
-void doFitUpsilon_Data_postCWR_ppFit_constrained(
-       int collId = kPPDATA,  
-       float ptLow=0, float ptHigh=30, 
-       float yLow=0.0, float yHigh=0.4,
+void doFitUpsilon_Data_postCWR_PbPbFit_constrained_new_LLR_test(
+       int collId = kAADATA,  
+       float ptLow=0, float ptHigh=2, 
+       float yLow=0, float yHigh=2.4,
        int cLow=0, int cHigh=200,
        float muPtCut=4.0,
        bool fixParameters=1,
@@ -91,7 +91,7 @@ void doFitUpsilon_Data_postCWR_ppFit_constrained(
   PSetUpsAndBkg initPset = getUpsilonPsets( collId, ptLow, ptHigh, yLow, yHigh, cLow, cHigh, muPtCut) ; 
   initPset.SetMCSgl();
 
-  RooRealVar    sigma1s_1("sigma1s_1","width/sigma of the signal gaussian mass PDF",0.05, 0.01, 0.3);
+  RooRealVar    sigma1s_1("sigma1s_1","width/sigma of the signal gaussian mass PDF",0.04, 0.01, 0.30);
   RooFormulaVar sigma2s_1("sigma2s_1","@0*@1",RooArgList(sigma1s_1,mRatio21) );
   RooFormulaVar sigma3s_1("sigma3s_1","@0*@1",RooArgList(sigma1s_1,mRatio31) );
 
@@ -124,17 +124,22 @@ void doFitUpsilon_Data_postCWR_ppFit_constrained(
   TFile *file_param_pp = new TFile("AvgSigPar_PP.root","read");
   TH1D* hParmAvg_pp_n = (TH1D*) file_param_pp->Get("hAvgn");
   TH1D* hParmAvg_pp_ax = (TH1D*) file_param_pp->Get("hAvgalphax");
+  TFile *file_par_from_pp = new TFile(Form("fitResults/Constrain/fitresults_upsilon_fixParm1_seed2_DoubleCB_PP_DATA_pt%.1f-%.1f_y%.1f-%.1f_muPt4.0.root",ptLow,ptHigh,yLow,yHigh),"read");
+  RooWorkspace* ws_from_pp = (RooWorkspace*) file_par_from_pp->Get("workspace");
+
 
   if (fixParameters)   {
-    n1s_1.setVal(hParmAvg_pp_n->GetBinContent(2)); alpha1s_1.setVal(hParmAvg_pp_ax->GetBinContent(1)); x1s->setVal(hParmAvg_pp_ax->GetBinContent(5));
+    n1s_1.setVal(ws_from_pp->var("n1s_1")->getVal());
+    alpha1s_1.setVal(ws_from_pp->var("alpha1s_1")->getVal());
+    sigma1s_1.setVal(ws_from_pp->var("sigma1s_1")->getVal());
+    x1s->setVal(ws_from_pp->var("x1s")->getVal());
+    f1s->setVal(ws_from_pp->var("f1s")->getVal());
   }
 
-  
-
-
-  RooGaussian nconstraint("nconstraint","nconstraint",n1s_1,RooConst(hParmAvg_pp_n->GetBinContent(2)),RooConst(hParmAvg_pp_n->GetBinContent(7)));
-  RooGaussian alphaconstraint("alphaconstraint","alphaconstraint",alpha1s_1,RooConst(hParmAvg_pp_ax->GetBinContent(1)),RooConst(hParmAvg_pp_ax->GetBinContent(6)));
-  RooGaussian xconstraint("xconstraint","xconstraint",*x1s,RooConst(hParmAvg_pp_ax->GetBinContent(5)),RooConst(hParmAvg_pp_ax->GetBinContent(10)));
+  RooGaussian nconstraint("nconstraint","nconstraint",n1s_1,RooConst(ws_from_pp->var("n1s_1")->getVal()),RooConst(ws_from_pp->var("n1s_1")->getError()));
+  RooGaussian alphaconstraint("alphaconstraint","alphaconstraint",alpha1s_1,RooConst(ws_from_pp->var("alpha1s_1")->getVal()),RooConst(ws_from_pp->var("alpha1s_1")->getError()));
+  RooGaussian xconstraint("xconstraint","xconstraint",*x1s,RooConst(ws_from_pp->var("x1s")->getVal()),RooConst(ws_from_pp->var("x1s")->getError()));
+  RooGaussian fconstraint("fconstraint","fconstraint",*f1s,RooConst(ws_from_pp->var("f1s")->getVal()),RooConst(ws_from_pp->var("f1s")->getError()));
 
   RooCBShape* cb1s_1 = new RooCBShape("cball1s_1", "cystal Ball", *(ws->var("mass")), mean1s, sigma1s_1, alpha1s_1, n1s_1);
   cout << " n1s_1.getVal() = " << n1s_1.getVal() << endl;
@@ -186,15 +191,28 @@ void doFitUpsilon_Data_postCWR_ppFit_constrained(
   model = new RooAddPdf("model","1S+2S+3S + Bkg",RooArgList(*cb1s, *cb2s, *cb3s, *bkg),RooArgList(*nSig1s,*nSig2s,*nSig3s,*nBkg));
   
 
-  RooProdPdf modelc("modelc","model with constraint",RooArgSet(*model,RooArgSet(nconstraint,alphaconstraint,xconstraint)));
+  RooProdPdf modelc("modelc","model with constraint",RooArgSet(*model,RooArgSet(nconstraint,alphaconstraint,xconstraint,fconstraint)));
   ws->import(modelc);
 
   RooPlot* myPlot2 = (RooPlot*)myPlot->Clone();
   ws->data("reducedDS")->plotOn(myPlot2,Name("dataOS_FIT"),MarkerSize(.8));
 
+  RooAbsReal * nll = ws->pdf("modelc")->createNLL(*(ws->data("reducedDS")),NumCPU(100) );
+  RooMinimizer(*nll).migrad() ;
+  RooAbsReal* pll = nll->createProfile(RooArgSet(*nSig1s)) ;
+  RooPlot* frame1 = nSig1s->frame(Bins(200),Range(500,3000),Title("profileLL in N_Ups1S")) ;
+  nll->plotOn(frame1,ShiftToZero()) ;
+  TCanvas* c_llr = new TCanvas("profile","",600,600);
+  c_llr->cd();
+  frame1->GetYaxis()->SetLimits(-0.1,50);
+  frame1->GetYaxis()->SetRangeUser(-0.1,50);
+  frame1->Draw();
+  c_llr->SaveAs("profile.pdf");
+
+
   
 //  RooFitResult* fitRes2 = ws->pdf("model")->fitTo(*reducedDS,Save(), Hesse(kTRUE),Range(massLow, massHigh),Minos(0), SumW2Error(kTRUE));
-  RooFitResult* fitRes2 = ws->pdf("modelc")->fitTo(*reducedDS,Constrain(RooArgSet(n1s_1,alpha1s_1,*x1s)),Save(), Hesse(kTRUE),Range(massLow, massHigh),Timer(kTRUE),Extended(kTRUE));
+  RooFitResult* fitRes2 = ws->pdf("modelc")->fitTo(*reducedDS,Constrain(RooArgSet(n1s_1,alpha1s_1,*x1s,*f1s)),Save(), Hesse(kTRUE),Range(massLow, massHigh),Timer(kTRUE),Extended(kTRUE));
   //RooFitResult* fitRes2 = ws->pdf("model")->fitTo(*reducedDS,Save(), Hesse(kTRUE),Range(massLow, massHigh),Minos(0), SumW2Error(kTRUE),Extended(kTRUE));
   ws->pdf("modelc")->plotOn(myPlot2,Name("modelHist"));
   ws->pdf("modelc")->plotOn(myPlot2,Name("Sig1S"),Components(RooArgSet(*cb1s)),LineColor(kOrange+7),LineWidth(2),LineStyle(2));
@@ -317,6 +335,7 @@ void doFitUpsilon_Data_postCWR_ppFit_constrained(
   RooPlot* legFrame = ws->var("mass")->frame(Name("Fit Results"), Title("Fit Results"));
   ws->pdf("model")->paramOn(legFrame,Layout(0,.95, .97),Parameters(paramList));
  // legFrame->findObject(Form("%s_paramBox",ws->pdf("model")->GetName()))->Draw();
+  
              
   
   TH1D* outh = new TH1D("fitResults","fit result",20,0,20);
@@ -406,9 +425,9 @@ void doFitUpsilon_Data_postCWR_ppFit_constrained(
   hChisq->GetXaxis()->SetBinLabel(3,"chisq/ndf");
   hChisq->GetXaxis()->SetBinLabel(4,"nll");
 
-  TFile* outf = new TFile(Form("fitResults/Constrain/fitresults_upsilon_fixParm%d_seed%d_DoubleCB_%s.root",fixParameters,FixParm_seed,kineLabel.Data()),"recreate");
+  TFile* outf = new TFile(Form("fitResults/LLR/fitresults_upsilon_fixParm%d_seed%d_DoubleCB_%s.root",fixParameters,FixParm_seed,kineLabel.Data()),"recreate");
   outh->Write();
-  c1->SaveAs(Form("fitResults/Constrain/fitresults_upsilon_fixParm%d_seed%d_DoubleCB_%s.pdf",fixParameters,FixParm_seed,kineLabel.Data()));
+  c1->SaveAs(Form("fitResults/LLR/fitresults_upsilon_fixParm%d_seed%d_DoubleCB_%s.pdf",fixParameters,FixParm_seed,kineLabel.Data()));
   c1->Write();
   ws->Write();
   hChisq->Write();

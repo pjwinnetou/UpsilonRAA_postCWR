@@ -19,11 +19,11 @@
 
 using namespace std;
 using namespace RooFit;
-void doFitUpsilon_Data_postCWR_ppFit_constrained(
-       int collId = kPPDATA,  
+void doFitUpsilon_Data_postCWR_PbPbFit_constrained_new_centrality_per6070(
+       int collId = kAADATAPeri,  
        float ptLow=0, float ptHigh=30, 
-       float yLow=0.0, float yHigh=0.4,
-       int cLow=0, int cHigh=200,
+       float yLow=0, float yHigh=2.4,
+       int cLow=120, int cHigh=140,
        float muPtCut=4.0,
        bool fixParameters=1,
        int FixParm_seed=2  )
@@ -91,7 +91,7 @@ void doFitUpsilon_Data_postCWR_ppFit_constrained(
   PSetUpsAndBkg initPset = getUpsilonPsets( collId, ptLow, ptHigh, yLow, yHigh, cLow, cHigh, muPtCut) ; 
   initPset.SetMCSgl();
 
-  RooRealVar    sigma1s_1("sigma1s_1","width/sigma of the signal gaussian mass PDF",0.05, 0.01, 0.3);
+  RooRealVar    sigma1s_1("sigma1s_1","width/sigma of the signal gaussian mass PDF",0.04, 0.01, 0.30);
   RooFormulaVar sigma2s_1("sigma2s_1","@0*@1",RooArgList(sigma1s_1,mRatio21) );
   RooFormulaVar sigma3s_1("sigma3s_1","@0*@1",RooArgList(sigma1s_1,mRatio31) );
 
@@ -124,17 +124,24 @@ void doFitUpsilon_Data_postCWR_ppFit_constrained(
   TFile *file_param_pp = new TFile("AvgSigPar_PP.root","read");
   TH1D* hParmAvg_pp_n = (TH1D*) file_param_pp->Get("hAvgn");
   TH1D* hParmAvg_pp_ax = (TH1D*) file_param_pp->Get("hAvgalphax");
+  TFile *file_par = new TFile("fitResults/Constrain/fitresults_upsilon_fixParm1_seed2_DoubleCB_AA_DATA_pt0.0-30.0_y0.0-2.4_muPt4.0_centrality0-200_dphiEp_0.00PI_100.00PI.root","read");
+  RooWorkspace* ws_from_nom = (RooWorkspace*) file_par->Get("workspace");
+
 
   if (fixParameters)   {
-    n1s_1.setVal(hParmAvg_pp_n->GetBinContent(2)); alpha1s_1.setVal(hParmAvg_pp_ax->GetBinContent(1)); x1s->setVal(hParmAvg_pp_ax->GetBinContent(5));
+    n1s_1.setVal(ws_from_nom->var("n1s_1")->getVal());
+    alpha1s_1.setVal(ws_from_nom->var("alpha1s_1")->getVal());
+    sigma1s_1.setVal(ws_from_nom->var("sigma1s_1")->getVal());
+    x1s->setVal(ws_from_nom->var("x1s")->getVal());
+    f1s->setVal(ws_from_nom->var("f1s")->getVal());
+
+    n1s_1.setConstant();
+    alpha1s_1.setConstant();
+    sigma1s_1.setConstant();
+    x1s->setConstant();
+    f1s->setConstant();
   }
 
-  
-
-
-  RooGaussian nconstraint("nconstraint","nconstraint",n1s_1,RooConst(hParmAvg_pp_n->GetBinContent(2)),RooConst(hParmAvg_pp_n->GetBinContent(7)));
-  RooGaussian alphaconstraint("alphaconstraint","alphaconstraint",alpha1s_1,RooConst(hParmAvg_pp_ax->GetBinContent(1)),RooConst(hParmAvg_pp_ax->GetBinContent(6)));
-  RooGaussian xconstraint("xconstraint","xconstraint",*x1s,RooConst(hParmAvg_pp_ax->GetBinContent(5)),RooConst(hParmAvg_pp_ax->GetBinContent(10)));
 
   RooCBShape* cb1s_1 = new RooCBShape("cball1s_1", "cystal Ball", *(ws->var("mass")), mean1s, sigma1s_1, alpha1s_1, n1s_1);
   cout << " n1s_1.getVal() = " << n1s_1.getVal() << endl;
@@ -168,9 +175,9 @@ void doFitUpsilon_Data_postCWR_ppFit_constrained(
   if(init_sigma_min <0) init_sigma_min = 0;
   if(init_lambda_min <0) init_lambda_min = 0;
  
-  RooRealVar err_mu("#mu","err_mu",init_mu,  0, 25) ;
-  RooRealVar err_sigma("#sigma","err_sigma", init_sigma, 0,25);
-  RooRealVar m_lambda("#lambda","m_lambda",  init_lambda, 0,25);
+  RooRealVar err_mu("#mu","err_mu",3.2,  0, 20) ;
+  RooRealVar err_sigma("#sigma","err_sigma", 1.5, 0,30);
+  RooRealVar m_lambda("#lambda","m_lambda",  5, 0,30);
 
 
   RooGenericPdf *bkg;
@@ -184,25 +191,22 @@ void doFitUpsilon_Data_postCWR_ppFit_constrained(
 
   RooAddPdf* model = new RooAddPdf();
   model = new RooAddPdf("model","1S+2S+3S + Bkg",RooArgList(*cb1s, *cb2s, *cb3s, *bkg),RooArgList(*nSig1s,*nSig2s,*nSig3s,*nBkg));
-  
-
-  RooProdPdf modelc("modelc","model with constraint",RooArgSet(*model,RooArgSet(nconstraint,alphaconstraint,xconstraint)));
-  ws->import(modelc);
+  ws->import(*model);
 
   RooPlot* myPlot2 = (RooPlot*)myPlot->Clone();
   ws->data("reducedDS")->plotOn(myPlot2,Name("dataOS_FIT"),MarkerSize(.8));
 
   
 //  RooFitResult* fitRes2 = ws->pdf("model")->fitTo(*reducedDS,Save(), Hesse(kTRUE),Range(massLow, massHigh),Minos(0), SumW2Error(kTRUE));
-  RooFitResult* fitRes2 = ws->pdf("modelc")->fitTo(*reducedDS,Constrain(RooArgSet(n1s_1,alpha1s_1,*x1s)),Save(), Hesse(kTRUE),Range(massLow, massHigh),Timer(kTRUE),Extended(kTRUE));
+  RooFitResult* fitRes2 = ws->pdf("model")->fitTo(*reducedDS,Save(), Hesse(kTRUE),Range(massLow, massHigh),Timer(kTRUE),Extended(kTRUE));
   //RooFitResult* fitRes2 = ws->pdf("model")->fitTo(*reducedDS,Save(), Hesse(kTRUE),Range(massLow, massHigh),Minos(0), SumW2Error(kTRUE),Extended(kTRUE));
-  ws->pdf("modelc")->plotOn(myPlot2,Name("modelHist"));
-  ws->pdf("modelc")->plotOn(myPlot2,Name("Sig1S"),Components(RooArgSet(*cb1s)),LineColor(kOrange+7),LineWidth(2),LineStyle(2));
-  ws->pdf("modelc")->plotOn(myPlot2,Components(RooArgSet(*cb2s)),LineColor(kOrange+7),LineWidth(2),LineStyle(2));
+  ws->pdf("model")->plotOn(myPlot2,Name("modelHist"));
+  ws->pdf("model")->plotOn(myPlot2,Name("Sig1S"),Components(RooArgSet(*cb1s)),LineColor(kOrange+7),LineWidth(2),LineStyle(2));
+  ws->pdf("model")->plotOn(myPlot2,Components(RooArgSet(*cb2s)),LineColor(kOrange+7),LineWidth(2),LineStyle(2));
   //ws->pdf("model")->plotOn(myPlot2,Components(RooArgSet(*cb2s)),LineColor(kMagenta+3),LineWidth(2));
-  ws->pdf("modelc")->plotOn(myPlot2,Components(RooArgSet(*cb3s)),LineColor(kOrange+7),LineWidth(2),LineStyle(2));
+  ws->pdf("model")->plotOn(myPlot2,Components(RooArgSet(*cb3s)),LineColor(kOrange+7),LineWidth(2),LineStyle(2));
   //ws->pdf("model")->plotOn(myPlot2,Components(RooArgSet(*cb3s)),LineColor(kGreen+3),LineWidth(2));
-  ws->pdf("modelc")->plotOn(myPlot2,Name("bkgPDF"),Components(RooArgSet(*bkg)),LineColor(kBlue),LineStyle(kDashed),LineWidth(2));
+  ws->pdf("model")->plotOn(myPlot2,Name("bkgPDF"),Components(RooArgSet(*bkg)),LineColor(kBlue),LineStyle(kDashed),LineWidth(2));
 
   myPlot2->SetFillStyle(4000);
   myPlot2->SetAxisRange(massLowForPlot, massHighForPlot,"X");

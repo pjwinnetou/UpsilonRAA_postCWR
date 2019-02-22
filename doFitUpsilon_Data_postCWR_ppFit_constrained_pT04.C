@@ -19,10 +19,10 @@
 
 using namespace std;
 using namespace RooFit;
-void doFitUpsilon_Data_postCWR_ppFit_constrained(
+void doFitUpsilon_Data_postCWR_ppFit_constrained_pT04(
        int collId = kPPDATA,  
-       float ptLow=0, float ptHigh=30, 
-       float yLow=0.0, float yHigh=0.4,
+       float ptLow=0, float ptHigh=4, 
+       float yLow=0.0, float yHigh=2.4,
        int cLow=0, int cHigh=200,
        float muPtCut=4.0,
        bool fixParameters=1,
@@ -115,7 +115,8 @@ void doFitUpsilon_Data_postCWR_ppFit_constrained(
   RooFormulaVar n2s_2("n2s_2","1.0*@0",RooArgList(n1s_1) );
   RooFormulaVar n3s_2("n3s_2","1.0*@0",RooArgList(n1s_1) );
 
-  RooRealVar *f1s = new RooRealVar("f1s","1S CB fraction", 0.5, 0, 1);
+  RooRealVar *f1s = new RooRealVar("f1s","1S CB fraction", 0.65, 0, 1);
+  //RooRealVar *f1s = new RooRealVar("f1s","1S CB fraction", 0.4, 0, 1);
   RooFormulaVar f2s("f2s","1.0*@0",RooArgList(*f1s) );
   RooFormulaVar f3s("f3s","1.0*@0",RooArgList(*f1s) );
 
@@ -168,9 +169,9 @@ void doFitUpsilon_Data_postCWR_ppFit_constrained(
   if(init_sigma_min <0) init_sigma_min = 0;
   if(init_lambda_min <0) init_lambda_min = 0;
  
-  RooRealVar err_mu("#mu","err_mu",init_mu,  0, 25) ;
-  RooRealVar err_sigma("#sigma","err_sigma", init_sigma, 0,25);
-  RooRealVar m_lambda("#lambda","m_lambda",  init_lambda, 0,25);
+  RooRealVar err_mu("#mu","err_mu",2.5,  0, 12) ;
+  RooRealVar err_sigma("#sigma","err_sigma", init_sigma, 0,21);
+  RooRealVar m_lambda("#lambda","m_lambda",  25, 1.5,30);
 
 
   RooGenericPdf *bkg;

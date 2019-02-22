@@ -19,10 +19,10 @@
 
 using namespace std;
 using namespace RooFit;
-void doFitUpsilon_Data_postCWR_ppFit_constrained(
+void doFitUpsilon_Data_postCWR_ppFit_constrained_pT46_rap0816(
        int collId = kPPDATA,  
-       float ptLow=0, float ptHigh=30, 
-       float yLow=0.0, float yHigh=0.4,
+       float ptLow=4, float ptHigh=6, 
+       float yLow=0.0, float yHigh=2.4,
        int cLow=0, int cHigh=200,
        float muPtCut=4.0,
        bool fixParameters=1,
@@ -91,7 +91,7 @@ void doFitUpsilon_Data_postCWR_ppFit_constrained(
   PSetUpsAndBkg initPset = getUpsilonPsets( collId, ptLow, ptHigh, yLow, yHigh, cLow, cHigh, muPtCut) ; 
   initPset.SetMCSgl();
 
-  RooRealVar    sigma1s_1("sigma1s_1","width/sigma of the signal gaussian mass PDF",0.05, 0.01, 0.3);
+  RooRealVar    sigma1s_1("sigma1s_1","width/sigma of the signal gaussian mass PDF",0.03, 0.01, 0.25);
   RooFormulaVar sigma2s_1("sigma2s_1","@0*@1",RooArgList(sigma1s_1,mRatio21) );
   RooFormulaVar sigma3s_1("sigma3s_1","@0*@1",RooArgList(sigma1s_1,mRatio31) );
 
@@ -115,7 +115,8 @@ void doFitUpsilon_Data_postCWR_ppFit_constrained(
   RooFormulaVar n2s_2("n2s_2","1.0*@0",RooArgList(n1s_1) );
   RooFormulaVar n3s_2("n3s_2","1.0*@0",RooArgList(n1s_1) );
 
-  RooRealVar *f1s = new RooRealVar("f1s","1S CB fraction", 0.5, 0, 1);
+  RooRealVar *f1s = new RooRealVar("f1s","1S CB fraction", 0.7, 0, 1);
+  //RooRealVar *f1s = new RooRealVar("f1s","1S CB fraction", 0.65, 0, 1);
   RooFormulaVar f2s("f2s","1.0*@0",RooArgList(*f1s) );
   RooFormulaVar f3s("f3s","1.0*@0",RooArgList(*f1s) );
 
