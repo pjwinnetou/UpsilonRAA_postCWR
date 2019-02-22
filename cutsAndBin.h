@@ -24,7 +24,6 @@
 
 float glbMuPtCut = 4; // for acceptance
 const int nPtBins1s  = 6;   double ptBin1s[nPtBins1s+1] = {0,2,4,6,9,12,30};
-const int nPtBins1s_dn  = 8;   double ptBin1s_dn[nPtBins1s_dn+1] = {0,1,2,3,4,6,9,12,30};
 //const int nPtBins1sMC  = 6;   double ptBin1sMC[nPtBins1sMC+1] = {0,2,4,6,9,12,30};
 //const int nPtBins1s  = 3;   double ptBin1s[nPtBins1s+1] = {0,4,9,12,30};
 //const int nPtBins1sMC  = 3;   double ptBin1sMC[nPtBins1sMC+1] = {0,4,9,12,30};
@@ -89,21 +88,87 @@ fWgtAA2->SetParameters( 0.477534, -0.00488679 );
 */
 
 //Upperlimit value
-double lower68_pt1  = 0.00E+00   ;
-double lower68_pt2  = 0.00E+00   ;
-double lower68_y1   = 0.00E+00   ;
-double lower68_y2   = 0.00E+00   ;
-double lower68_c2   = 0.00E+00   ;
-double lower68_c1   = 0.03618991 ;
-double lower68_cint = 0.00E+00   ;
+//double lower68_pt1  = 0.00E+00   ;
+//double lower68_pt2  = 0.00E+00   ;
+//double lower68_y1   = 0.00E+00   ;
+//double lower68_y2   = 0.00E+00   ;
+//double lower68_c2   = 0.00E+00   ;
+//double lower68_c1   = 0.03618991 ;
+//double lower68_cint = 0.00E+00   ;
+//
+//double upper68_pt1  = 0.081095397  ;
+//double upper68_pt2  = 0.051848485  ;
+//double upper68_y1   = 0.043153559  ;
+//double upper68_y2   = 0.085515537  ;
+//double upper68_c2   = 0.037200857  ;
+//double upper68_c1   = 0.173370454  ;
+//double upper68_cint = 0.04200117   ;
+//
+//double lower95_pt1 = 0;
+//double lower95_pt2 = 0;
+//double lower95_y1 = 0;
+//double lower95_y2 = 0;
+//double lower95_c2 = 0;
+//double lower95_c1 = 0;
+//double lower95_cint = 0;
+//
+//double upper95_pt1 =  0.148847232 ;
+//double upper95_pt2 =  0.095778193 ;
+//double upper95_y1 =   0.08403307  ;
+//double upper95_y2 =   0.121629254 ;
+//double upper95_c2 =   0.075640382 ;
+//double upper95_c1 =   0.242656483 ;
+//double upper95_cint = 0.075095649 ;
 
-double upper68_pt1  = 0.081095397  ;
-double upper68_pt2  = 0.051848485  ;
-double upper68_y1   = 0.043153559  ;
-double upper68_y2   = 0.085515537  ;
-double upper68_c2   = 0.037200857  ;
-double upper68_c1   = 0.173370454  ;
-double upper68_cint = 0.04200117   ;
+//Upperlimit value 2018_0219
+//double lower68_pt1  = 0.00E+00     ;
+//double lower68_pt2  = 0.00E+00     ;
+//double lower68_y1   = 0.00E+00     ;
+//double lower68_y2   = 0.00E+00     ;
+//double lower68_c2   = 0.00E+00     ;
+//double lower68_c1   = 0.036170831  ;
+//double lower68_cint = 0.00E+00     ;
+//
+//double upper68_pt1  = 0.075375655  ;
+//double upper68_pt2  = 0.051848485  ;
+//double upper68_y1   = 0.043153559  ;
+//double upper68_y2   = 0.067868394  ;
+//double upper68_c2   = 0.037200857  ;
+//double upper68_c1   = 0.173381445  ;
+//double upper68_cint = 0.048198279  ;
+//
+//double lower95_pt1 = 0;
+//double lower95_pt2 = 0;
+//double lower95_y1 = 0;
+//double lower95_y2 = 0;
+//double lower95_c2 = 0;
+//double lower95_c1 = 0;
+//double lower95_cint = 0;
+//
+//double upper95_pt1 =  0.137622193  ;
+//double upper95_pt2 =  0.095778193  ;
+//double upper95_y1 =   0.08403307   ;
+//double upper95_y2 =   0.12882883   ;
+//double upper95_c2 =   0.075640382  ;
+//double upper95_c1 =   0.242656483  ;
+//double upper95_cint = 0.090624869  ;
+
+//Upperlimit value 2018_0420
+double lower68_pt1  = 0.00E+00     ;
+double lower68_pt2  = 0.00E+00     ;
+double lower68_y1   = 0.00E+00     ;
+double lower68_y2   = 0.00E+00     ;
+double lower68_c2   = 0.00E+00     ;
+double lower68_c1   = 0.048408272*0.332814/0.326810*0.309684/0.309966   ;
+double lower68_cint = 0.00E+00     ;
+
+double upper68_pt1  = 0.091511678*0.286061/0.292763*0.299092/0.292052 ;
+double upper68_pt2  = 0.051286058*0.371788/0.362694*0.328928/0.336090 ;
+double upper68_y1   = 0.057943188*0.376011/0.368607*0.347760/0.348844 ;
+double upper68_y2   = 0.06871151*0.281479/0.277383*0.265174/0.264372  ;
+double upper68_c2   = 0.038991035*0.332814/0.326810*0.309684/0.309966 ;
+double upper68_c1   = 0.18472074*0.332814/0.326810*0.309684/0.309966  ;
+double upper68_cint = 0.058262811*0.332814/0.326810*0.309684/0.309966 ;
 
 double lower95_pt1 = 0;
 double lower95_pt2 = 0;
@@ -113,35 +178,104 @@ double lower95_c2 = 0;
 double lower95_c1 = 0;
 double lower95_cint = 0;
 
-double upper95_pt1 =  0.148847232 ;
-double upper95_pt2 =  0.095778193 ;
-double upper95_y1 =   0.08403307  ;
-double upper95_y2 =   0.121629254 ;
-double upper95_c2 =   0.075640382 ;
-double upper95_c1 =   0.242656483 ;
-double upper95_cint = 0.075095649 ;
+double upper95_pt1 =  0.155279103*0.286061/0.292763*0.299092/0.292052;
+double upper95_pt2 =  0.094318138*0.371788/0.362694*0.328928/0.336090;
+double upper95_y1 =   0.099952628*0.376011/0.368607*0.347760/0.348844;
+double upper95_y2 =   0.125994869*0.281479/0.277383*0.265174/0.264372;
+double upper95_c2 =   0.076087933*0.332814/0.326810*0.309684/0.309966;
+double upper95_c1 =   0.253908129*0.332814/0.326810*0.309684/0.309966;
+double upper95_cint = 0.094618599*0.332814/0.326810*0.309684/0.309966;
+
+
+double upper68_2s_c1 = 7.62E-02;
+double upper95_2s_c1 = 1.17E-01;
+
+
+
 
 //Upperlimit CrossSection value
+//double lower68XS_pt1 = 0;
+//double lower68XS_pt2 = 0;
+//double lower68XS_y1 = 0;
+//double lower68XS_y2 = 0;
+//
+//double upper68XS_pt1 = 0.001083787  ;
+//double upper68XS_pt2 = 0.000233267  ;
+//double upper68XS_y1  = 0.008072324  ;
+//double upper68XS_y2  = 0.009555016  ;
+//
+//double lower95XS_pt1 = 0;
+//double lower95XS_pt2 = 0;
+//double lower95XS_y1 = 0;
+//double lower95XS_y2 = 0;
+//
+//double upper95XS_pt1 = 0.001989228   ;
+//double upper95XS_pt2 = 0.000437013   ;
+//double upper95XS_y1 =  0.015721179   ;
+//double upper95XS_y2 =  0.018107819   ;
+
+//Upperlimit CrossSection value 2018_0219
+//double lower68XS_pt1 = 0;
+//double lower68XS_pt2 = 0;
+//double lower68XS_y1 = 0;
+//double lower68XS_y2 = 0;
+//
+//double upper68XS_pt1 = 0.0010069    ;
+//double upper68XS_pt2 = 0.000235107  ;
+//double upper68XS_y1  = 0.009949407  ;
+//double upper68XS_y2  = 0.010055214    ;
+//
+//double lower95XS_pt1 = 0;
+//double lower95XS_pt2 = 0;
+//double lower95XS_y1 = 0;
+//double lower95XS_y2 = 0;
+//
+//double upper95XS_pt1 = 0.001838352  ;
+//double upper95XS_pt2 = 0.000440664  ;
+//double upper95XS_y1 =  0.019399529  ;
+//double upper95XS_y2 =  0.01917852    ;
+
+//Upperlimit CrossSection value 2018_0219
+//double lower68XS_pt1 = 0;
+//double lower68XS_pt2 = 0;
+//double lower68XS_y1 = 0;
+//double lower68XS_y2 = 0;
+//
+//double upper68XS_pt1 = 0.001347207 ;
+//double upper68XS_pt2 = 0.000181412 ;
+//double upper68XS_y1  = 0.010154671 ;
+//double upper68XS_y2  = 0.00991101  ;
+//
+//double lower95XS_pt1 = 0;
+//double lower95XS_pt2 = 0;
+//double lower95XS_y1 = 0;
+//double lower95XS_y2 = 0;
+//
+//double upper95XS_pt1 = 0.001961598 ;
+//double upper95XS_pt2 = 0.000336498 ;
+//double upper95XS_y1 =  0.017516703 ;
+//double upper95XS_y2 =  0.018173723 ;
+
+//Upperlimit CrossSection value 2018_0507
 double lower68XS_pt1 = 0;
 double lower68XS_pt2 = 0;
 double lower68XS_y1 = 0;
 double lower68XS_y2 = 0;
 
-double upper68XS_pt1 = 0.001083787  ;
-double upper68XS_pt2 = 0.000233267  ;
-double upper68XS_y1  = 0.008072324  ;
-double upper68XS_y2  = 0.009555016  ;
+double upper68XS_pt1 = 0.001347207*0.286061/0.292052  ;
+double upper68XS_pt2 = 0.000181412*0.371788/0.336090  ;
+double upper68XS_y1  = 0.010154671*0.376011/0.348844  ;
+double upper68XS_y2  = 0.009911025*0.281479/0.264372  ;
 
 double lower95XS_pt1 = 0;
 double lower95XS_pt2 = 0;
 double lower95XS_y1 = 0;
 double lower95XS_y2 = 0;
 
-double upper95XS_pt1 = 0.001989228   ;
-double upper95XS_pt2 = 0.000437013   ;
-double upper95XS_y1 =  0.015721179   ;
-double upper95XS_y2 =  0.018107819   ;
-
+double upper95XS_pt1 = 0.002285294*0.286061/0.292052  ;
+double upper95XS_pt2 = 0.000336498*0.371788/0.336090  ;
+double upper95XS_y1 =  0.017516703*0.376011/0.348844  ;
+double upper95XS_y2 =  0.018173723*0.281479/0.264372  ;
 // TAA Value
 double TAA1s[nCentBins1s+1] = {25.98, 20.46, 14.35, 8.66, 4.978, 2.66, 1.296, 0.5729, 0.1095, 5.607};
 double TAA2s[nCentBins2s+1] = {25.98, 20.46, 14.35, 8.66, 4.978, 2.66, 1.296, 0.5729, 0.1095, 5.607};
@@ -151,6 +285,14 @@ double TAA3s[nCentBins3s+1] = {15.41, 1.405, 5.607};
 double TAA_unc1s[nCentBins1s+1] = {0.017, 0.017, 0.02, 0.028, 0.04, 0.058, 0.081, 0.11, 0.18, 0.089};
 double TAA_unc2s[nCentBins2s+1] = {0.017, 0.017, 0.02, 0.028, 0.04, 0.058, 0.081, 0.11, 0.18, 0.089};
 double TAA_unc3s[nCentBins3s+1] = {0.022, 0.12, 0.089};
+
+double TAA_unc1sLo[nCentBins1s+1] = {0.029, 0.03, 0.032, 0.038, 0.049, 0.066, 0.088, 0.112, 0.102, 0.034};
+double TAA_unc2sLo[nCentBins2s+1] = {0.029, 0.03, 0.032, 0.038, 0.049, 0.066, 0.088, 0.112, 0.102, 0.034};
+double TAA_unc3sLo[nCentBins2s+1] = {0.031, 0.044, 0.034};
+
+double TAA_unc1sHi[nCentBins1s+1] = {0.018, 0.019, 0.023, 0.033, 0.047, 0.068, 0.092, 0.124, 0.164, 0.028};
+double TAA_unc2sHi[nCentBins2s+1] = {0.018, 0.019, 0.023, 0.033, 0.047, 0.068, 0.092, 0.124, 0.164, 0.028};
+double TAA_unc3sHi[nCentBins2s+1] = {0.021, 0.067, 0.028};
 
 const double inel_cross_PbPb = 6740;
 //const double NumberOfMBColl = 2366003000;
@@ -162,6 +304,7 @@ const double NumberOfMBColl1 = 3092000000;
 
 // lumi Unc 
 double lumi_unc_pp = 0.023;
+//double nMB_unc = TMath::Sqrt(0.02*0.02);
 double nMB_unc = TMath::Sqrt(0.02*0.02+0.01*0.01);
 
 struct ParticleMass { double JPsi, Psi2S, Y1S, Y2S, Y3S, Z, PiPlus, KaPlus; };
